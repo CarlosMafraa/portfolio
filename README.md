@@ -15,7 +15,7 @@ assets/
   img/favicon.svg     ícone da aba
   img/og.svg          fonte do preview de link
   img/og.png          preview de link 1200x630 (gerado de og.svg)
-  cv/                 carlos-fabiano-mafra-cv.pdf (botão "Baixar CV")
+  cv/                 carlos-mafra-cv.pdf (botão "Baixar CV")
 design/               export original do Claude Design (ignorado no git)
 ```
 
@@ -37,7 +37,7 @@ no Pages. Se um dia usar domínio próprio ou renomear o repo para
 
 ## Antes de divulgar — pendências de conteúdo
 
-- [x] **CV**: `assets/cv/carlos-fabiano-mafra-cv.pdf` no repo; botão "Baixar CV" funciona.
+- [x] **CV**: `assets/cv/carlos-mafra-cv.pdf` no repo; botão "Baixar CV" funciona.
 - [x] **Imagem de link (og)**: `og.png` 1200×630 gerado de `og.svg`; `<head>` aponta pra ele.
 - [x] **URL canônica**: `carlosmafraa.github.io/portfolio/` no canonical, Open Graph e JSON-LD.
 - [ ] **Nível de inglês**: considerar um chip no hero com seu nível (o CV cita "trabalho remoto").
