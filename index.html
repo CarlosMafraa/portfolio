@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Carlos Mafra — Desenvolvedor Full Stack em Manaus</title>
-<meta name="description" content="Portfólio de Carlos Fabiano Gomes Mafra, desenvolvedor full stack em Manaus (AM). Angular e TypeScript no front; Spring Boot (Java/Kotlin) e FastAPI (Python) no back; testes com Playwright e K6.">
+<title>Carlos Mafra</title>
+<meta name="description" content="Portfólio de Carlos Fabiano Gomes Mafra, desenvolvedor full stack. Angular e TypeScript no front; Spring Boot (Java/Kotlin) e FastAPI (Python) no back; testes com Playwright e K6.">
 <meta name="author" content="Carlos Fabiano Gomes Mafra">
 <meta name="theme-color" content="#fbfbfa" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
@@ -16,16 +16,16 @@
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:site_name" content="Carlos Mafra">
-<meta property="og:title" content="Carlos Mafra — Desenvolvedor Full Stack em Manaus">
-<meta property="og:description" content="Angular e TypeScript no front; Spring Boot (Java/Kotlin) e FastAPI (Python) no back; testes com Playwright e K6. Vim da engenharia civil.">
+<meta property="og:title" content="Carlos Mafra | Desenvolvedor Full Stack">
+<meta property="og:description" content="Sistemas web de ponta a ponta: Angular no front, Spring Boot e FastAPI no back, testes com Playwright e K6.">
 <meta property="og:url" content="https://carlosmafraa.github.io/portfolio/">
 <meta property="og:image" content="https://carlosmafraa.github.io/portfolio/assets/img/og.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Carlos Mafra — Desenvolvedor Full Stack">
-<meta name="twitter:description" content="Full stack em Manaus. As duas pontas: a tela e o que a sustenta.">
+<meta name="twitter:title" content="Carlos Mafra | Desenvolvedor Full Stack">
+<meta name="twitter:description" content="Sistemas web de ponta a ponta: do front ao banco, com testes automatizados.">
 <meta name="twitter:image" content="https://carlosmafraa.github.io/portfolio/assets/img/og.png">
 
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
@@ -46,6 +46,10 @@
       }
       document.documentElement.setAttribute('data-theme', t);
     } catch (e) {}
+    /* habilita as animações de entrada; se o main.js não subir em 3s, mostra tudo */
+    var r = document.documentElement;
+    r.classList.add('js');
+    setTimeout(function () { if (!r.classList.contains('reveal-ready')) r.classList.remove('js'); }, 3000);
   })();
 </script>
 
@@ -58,8 +62,6 @@
   "familyName": "Mafra",
   "jobTitle": "Desenvolvedor Full Stack",
   "url": "https://carlosmafraa.github.io/portfolio/",
-  "address": { "@type": "PostalAddress", "addressLocality": "Manaus", "addressRegion": "AM", "addressCountry": "BR" },
-  "worksFor": { "@type": "Organization", "name": "Foxconn" },
   "sameAs": [
     "https://github.com/CarlosMafraa",
     "https://www.linkedin.com/in/carlos-mafraa/"
@@ -78,14 +80,26 @@
 
 <header class="site-header" id="topo">
   <div class="wrap site-header__inner">
-    <a class="brand" href="#topo" aria-label="Início — Carlos Mafra">
-      <svg class="brand__mark" width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
-        <rect width="10" height="10" fill="currentColor"></rect>
-        <rect x="12" width="10" height="10" fill="var(--accent)"></rect>
-        <rect y="12" width="10" height="10" fill="var(--accent)"></rect>
-        <rect x="12" y="12" width="10" height="10" fill="currentColor"></rect>
+    <a class="brand" href="#topo" aria-label="Início: Carlos Mafra">
+      <svg class="brand__mark" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="lg-nav-g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="var(--copper-1)"></stop>
+            <stop offset="1" stop-color="var(--copper-2)"></stop>
+          </linearGradient>
+          <mask id="lg-nav-m" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+            <g fill="none" stroke-linejoin="miter" stroke-miterlimit="10">
+              <path class="logo__draw" pathLength="1" d="M74.5 21.2A33 33 0 1 0 74.5 78.8" stroke="#fff" stroke-width="9"></path>
+              <path class="logo__draw" pathLength="1" d="M41 72V32.5L60 55L79 32.5V72" stroke="#fff" stroke-width="9"></path>
+              <path class="logo__draw" pathLength="1" d="M74.5 21.2A33 33 0 1 0 74.5 78.8" stroke="#000" stroke-width="2.6"></path>
+              <path class="logo__draw" pathLength="1" d="M41 72V32.5L60 55L79 32.5V72" stroke="#000" stroke-width="2.6"></path>
+            </g>
+          </mask>
+        </defs>
+        <path class="logo__moon" d="M52 4A46 46 0 0 0 52 96A37 46 0 0 1 52 4Z" fill="currentColor"></path>
+        <rect class="logo__copper" width="100" height="100" fill="url(#lg-nav-g)" mask="url(#lg-nav-m)"></rect>
       </svg>
-      <span class="brand__name">Carlos Mafra</span>
+      <span class="brand__text"><span class="brand__name">Carlos Mafra</span><span class="brand__role">Full Stack Dev</span></span>
     </a>
 
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-primary" aria-label="Abrir menu">
@@ -106,32 +120,33 @@
         <span class="theme-toggle__dot" aria-hidden="true"></span>
         <span class="theme-toggle__label">Tema</span>
       </button>
-      <a class="btn btn--solid" href="#contato">Falar comigo <span aria-hidden="true">&#8599;</span></a>
+      <a class="btn btn--solid" href="#contato">Tenho uma ideia <span aria-hidden="true">&#8599;</span></a>
     </div>
   </div>
+  <div class="scroll-progress" aria-hidden="true"></div>
 </header>
 
 <main id="conteudo">
 
   <!-- HERO -->
   <section class="hero" aria-labelledby="hero-title">
+    <canvas class="hero__net" aria-hidden="true"></canvas>
     <div class="hero__grid" aria-hidden="true"></div>
     <div class="wrap hero__inner">
+     <div class="hero__text">
       <ul class="chips" aria-label="Resumo">
-        <li class="chip chip--live"><span class="chip__dot"></span>Desenvolvedor full stack</li>
-        <li class="chip"><span class="chip__dot chip__dot--dim"></span>Manaus &middot; AM &middot; BR</li>
+        <li class="chip chip--live"><span class="chip__dot"></span>4+ anos de experiência</li>
         <li class="chip"><span class="chip__dot chip__dot--fg"></span>Angular &middot; Spring Boot &middot; FastAPI</li>
-        <li class="chip"><span class="chip__dot chip__dot--ok"></span>Disponível para trabalho remoto</li>
       </ul>
 
-      <h1 class="hero__title" id="hero-title">Desenvolvo as duas pontas: a tela e o que a sustenta.</h1>
+      <p class="hero__term mono" aria-hidden="true"><span class="hero__prompt"><span class="hero__host">carlos@dev:</span>~$</span> <span class="typer" data-words='["ng build --configuration production", "./gradlew bootRun", "uvicorn app.main:app --reload", "npx playwright test", "k6 run carga.js", "docker compose up -d", "kafka-console-consumer --topic changeover"]'>ng build --configuration production</span><span class="caret"></span></p>
+
+      <h1 class="hero__title" id="hero-title">Desenvolvedor <span class="grad">Full Stack</span></h1>
 
       <p class="hero__lead">
-        Desenvolvedor full stack em Manaus. Angular e TypeScript no front; Spring Boot (Java/Kotlin) e
-        FastAPI (Python) no back; PostgreSQL, SQL Server e Firebase nos dados; Kafka, Docker e CI/CD no
-        meio do caminho. Escrevo também os testes, com Playwright e K6, e ganhei um vício: pensar em como o
-        código falha em produção antes de escrevê-lo. Vim da engenharia civil e trouxe dela a obsessão por carga, tolerância
-        e o que acontece quando uma peça cede.
+        Angular e TypeScript no front, Spring Boot e FastAPI no back, PostgreSQL e Kafka nos dados,
+        e testes automatizados com Playwright e K6 garantindo que tudo funciona antes de chegar em
+        produção.
       </p>
 
       <div class="hero__cta">
@@ -139,27 +154,65 @@
         <a class="btn btn--ghost" href="https://www.linkedin.com/in/carlos-mafraa/" target="_blank" rel="noopener">LinkedIn <span aria-hidden="true">&#8599;</span></a>
         <a class="btn btn--ghost" href="assets/cv/carlos-mafra-cv.pdf" download>Baixar CV <span aria-hidden="true">&#8595;</span></a>
       </div>
+     </div>
+
+      <div class="hero__visual" aria-hidden="true">
+        <div class="logo-stage">
+          <svg class="logo-stage__ring" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="96" pathLength="100"></circle>
+            <circle class="logo-stage__ring2" cx="100" cy="100" r="84" pathLength="100"></circle>
+          </svg>
+          <span class="logo-stage__orbit"><i></i></span>
+          <span class="logo-stage__orbit logo-stage__orbit--b"><i></i></span>
+          <svg class="logo-stage__mark" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="lg-hero-g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="var(--copper-1)"></stop>
+            <stop offset="1" stop-color="var(--copper-2)"></stop>
+          </linearGradient>
+          <mask id="lg-hero-m" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+            <g fill="none" stroke-linejoin="miter" stroke-miterlimit="10">
+              <path class="logo__draw" pathLength="1" d="M74.5 21.2A33 33 0 1 0 74.5 78.8" stroke="#fff" stroke-width="9"></path>
+              <path class="logo__draw" pathLength="1" d="M41 72V32.5L60 55L79 32.5V72" stroke="#fff" stroke-width="9"></path>
+              <path class="logo__draw" pathLength="1" d="M74.5 21.2A33 33 0 1 0 74.5 78.8" stroke="#000" stroke-width="2.6"></path>
+              <path class="logo__draw" pathLength="1" d="M41 72V32.5L60 55L79 32.5V72" stroke="#000" stroke-width="2.6"></path>
+            </g>
+          </mask>
+        </defs>
+        <path class="logo__moon" d="M52 4A46 46 0 0 0 52 96A37 46 0 0 1 52 4Z" fill="currentColor"></path>
+        <rect class="logo__copper" width="100" height="100" fill="url(#lg-hero-g)" mask="url(#lg-hero-m)"></rect>
+      </svg>
+        </div>
+        <div class="lockup">
+          <p class="lockup__name">Carlos Mafra</p>
+          <p class="lockup__role mono">Desenvolvedor <span>|</span> Full Stack</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- MÉTRICAS -->
   <section class="metrics" aria-label="Números">
-    <div class="metrics__grid">
-      <div class="metric">
-        <p class="metric__value">4<span>+ anos</span></p>
-        <p class="metric__label">de experiência full stack, atuando de ponta a ponta desde 2022</p>
+    <div class="wrap bento bento--metrics">
+      <div class="card metric">
+        <p class="metric__key mono">exp.anos</p>
+        <p class="metric__value"><b class="metric__num" data-count="4">4</b><span>+ anos</span></p>
+        <p class="metric__label">desenvolvendo front e back em produção, desde 2022</p>
       </div>
-      <div class="metric">
-        <p class="metric__value">60<span>+ atividades</span></p>
+      <div class="card metric">
+        <p class="metric__key mono">changeover.atividades</p>
+        <p class="metric__value"><b class="metric__num" data-count="60">60</b><span>+ atividades</span></p>
         <p class="metric__label">monitoradas por changeover no sistema da Foxconn, com alerta automático via WhatsApp</p>
       </div>
-      <div class="metric">
-        <p class="metric__value">20<span>segundos</span></p>
+      <div class="card metric">
+        <p class="metric__key mono">e2e.duracao</p>
+        <p class="metric__value"><b class="metric__num" data-count="20">20</b><span>segundos</span></p>
         <p class="metric__label">para validar um fluxo com Playwright, contra 2&ndash;3 min no teste manual</p>
       </div>
-      <div class="metric">
-        <p class="metric__value">4<span>clientes</span></p>
-        <p class="metric__label">empresariais com código dele em produção no ERP Taurus</p>
+      <div class="card metric">
+        <p class="metric__key mono">taurus.empresas</p>
+        <p class="metric__value"><b class="metric__num" data-count="4">4</b><span>empresas</span></p>
+        <p class="metric__label">usando o ERP Taurus em produção, com as equipes de cada uma operando compras e estoque no dia a dia</p>
       </div>
     </div>
   </section>
@@ -169,21 +222,43 @@
     <div class="wrap">
       <div class="section__head">
         <span class="section__idx">01</span>
-        <h2 class="section__kicker" id="sobre-title">Sobre</h2>
+        <span class="section__kicker">sobre.md</span>
         <span class="section__rule"></span>
       </div>
-      <div class="prose-2col">
-        <p class="prose-lead">
-          Comecei na engenharia civil: bacharelado em Manaus entre 2015 e 2020, com o técnico em Construção
-          de Edifícios do IFAM no meio do caminho. Em 2022 troquei o canteiro pelo código, como estagiário
-          de desenvolvimento na Polícia Militar do Amazonas, e não voltei mais.
-        </p>
-        <p class="prose-dim">
-          Meu diferencial é cuidar dos dois lados da entrega. Escrevo as features (Angular no front,
-          Spring Boot e FastAPI no back) e também os testes que tentam quebrá-las, com Playwright e K6,
-          medindo tudo em InfluxDB e Grafana. Isso mudou como eu escrevo: penso a tela, o contrato da API,
-          o modelo de dados e o teste como uma coisa só.
-        </p>
+      <h2 class="section__title" id="sobre-title">Da engenharia civil para o código.</h2>
+
+      <div class="bento bento--sobre">
+        <article class="card card--pad sobre__lead">
+          <p class="prose-lead">
+            Formação em Engenharia Civil e técnico em Construção de Edifícios pelo IFAM. Em 2022, a troca
+            do canteiro de obras pelo código, com o estágio de desenvolvimento na Polícia Militar do
+            Amazonas. Desde então, software virou profissão.
+          </p>
+        </article>
+
+        <figure class="card win sobre__code" aria-label="Resumo em código">
+          <div class="win__bar"><span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="win__title">carlos.ts</span></div>
+<pre class="code"><code><span class="tk-c">// primeiro descobre onde quebra, depois entrega</span>
+<span class="tk-k">const</span> carlos = {
+  <span class="tk-p">perfil</span>: <span class="tk-s">"Full Stack"</span>,
+  <span class="tk-p">origem</span>: <span class="tk-s">"Engenharia Civil"</span>,
+  <span class="tk-p">desde</span>: <span class="tk-n">2022</span>,
+  <span class="tk-p">front</span>: [<span class="tk-s">"Angular"</span>, <span class="tk-s">"TypeScript"</span>],
+  <span class="tk-p">back</span>: [<span class="tk-s">"Spring Boot"</span>, <span class="tk-s">"FastAPI"</span>],
+  <span class="tk-p">dados</span>: [<span class="tk-s">"PostgreSQL"</span>, <span class="tk-s">"Kafka"</span>],
+  <span class="tk-p">testes</span>: [<span class="tk-s">"Playwright"</span>, <span class="tk-s">"K6"</span>],
+};</code></pre>
+          <div class="win__status mono" aria-hidden="true"><span><i></i>main</span><span>TypeScript</span><span>UTF-8</span><span class="win__status-ok">&#10003; 0 erros</span></div>
+        </figure>
+
+        <article class="card card--pad sobre__dim">
+          <p class="prose-dim">
+            Da engenharia veio o hábito de perguntar onde uma estrutura cede antes de construí-la. No
+            software, isso virou teste: cada funcionalidade vem acompanhada dos cenários que tentam
+            quebrá-la, com Playwright e K6, e dos resultados acompanhados no Grafana. Tela, API, banco e
+            teste pensados juntos, desde o início.
+          </p>
+        </article>
       </div>
     </div>
   </section>
@@ -193,18 +268,19 @@
     <div class="wrap">
       <div class="section__head">
         <span class="section__idx">02</span>
-        <h2 class="section__kicker" id="carreira-title">Experiência profissional</h2>
+        <span class="section__kicker">carreira.log</span>
         <span class="section__rule"></span>
       </div>
+      <h2 class="section__title" id="carreira-title">Experiência profissional</h2>
       <p class="section__intro">
-        A carreira como um <em>trace</em>: cada cargo é um span com início e duração reais. Abra um span
-        para ver o detalhe.
+        Cada barra mostra o período em cada empresa. Clique num cargo para ver os detalhes.
       </p>
 
-      <div class="trace">
-        <div class="trace__meta">
+      <div class="card trace">
+        <div class="trace__meta win__bar">
+          <span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span>
           <span class="mono">carreira/cfgm-2022-2026</span>
-          <span class="pill"><span class="pill__dot pill__dot--dim"></span>51 meses</span>
+          <span class="pill"><span class="pill__dot pill__dot--dim"></span>52 meses</span>
           <span class="pill"><span class="pill__dot pill__dot--ok"></span>4 spans</span>
         </div>
 
@@ -213,12 +289,12 @@
             <details class="span" open>
               <summary class="span__row">
                 <span class="span__title">Desenvolvedor Full-Stack <em>Foxconn</em></span>
-                <span class="span__bar" style="--o:70.6%;--w:29.4%" aria-hidden="true"><i></i></span>
-                <span class="span__when mono">05/2025 &rarr; atual</span>
+                <span class="span__bar" style="--o:69.2%;--w:30.8%" aria-hidden="true"><i></i></span>
+                <span class="span__when mono">05/2025 &rarr; 09/2026</span>
               </summary>
               <div class="span__body">
                 <ul>
-                  <li>Desenvolve funcionalidades full stack de um sistema de gestão de changeover (troca de linha de produção) distribuído em vários repositórios &mdash; backend, frontend, integração e WhatsApp/WAHA &mdash; com Spring Boot (Java/Kotlin), Hibernate/JPA, Angular, SQL Server e Docker.</li>
+                  <li>Desenvolveu funcionalidades full stack de um sistema de gestão de changeover (troca de linha de produção) distribuído em vários repositórios (backend, frontend, integração e WhatsApp/WAHA), com Spring Boot (Java/Kotlin), Hibernate/JPA, Angular, SQL Server e Docker.</li>
                   <li>Conduziu a refatoração e o desacoplamento de um sistema legado, padronizando design, regras de negócio e fluxos.</li>
                   <li>Integração orientada a eventos com Apache Kafka: alterações no SQL Server (capturadas via triggers) são publicadas em tópicos e processadas por consumers/workers no backend Spring Boot, desacoplando o banco da aplicação.</li>
                   <li>Deu visibilidade a gargalos que antes passavam batido: o sistema monitora mais de 60 atividades por changeover e dispara alerta automático via WhatsApp (WAHA) quando o tempo previsto de uma atividade estoura.</li>
@@ -235,12 +311,12 @@
             <details class="span">
               <summary class="span__row">
                 <span class="span__title">Desenvolvedor Full-Stack <em>Projex Consulting</em></span>
-                <span class="span__bar" style="--o:41.2%;--w:29.4%" aria-hidden="true"><i></i></span>
+                <span class="span__bar" style="--o:40.4%;--w:28.8%" aria-hidden="true"><i></i></span>
                 <span class="span__when mono">02/2024 &rarr; 05/2025</span>
               </summary>
               <div class="span__body">
                 <ul>
-                  <li>Desenvolveu módulos do Taurus, produto em produção para 4 clientes empresariais: módulo de compras (compara descontos por produto e por combo e aponta a opção mais vantajosa) e módulo de estoque.</li>
+                  <li>Desenvolveu módulos do Taurus, ERP em produção em 4 empresas e usado no dia a dia pelas equipes de cada uma: módulo de compras (compara descontos por produto e por combo e aponta a opção mais vantajosa) e módulo de estoque.</li>
                   <li>Colocou em produção a exibição de fotos de ordens de serviço: um carrossel com Angular definindo o comportamento conforme a orientação da imagem (pausa e rotação de fotos em paisagem) e CSS (transforms e animações) para transições com efeito de profundidade, conforme spec do cliente.</li>
                   <li>Construiu uma aplicação de leilão com lances em tempo real via WebSocket e Spring Boot, refletindo cada lance para todos os participantes conectados.</li>
                   <li>Front em Angular, PrimeNG e PrimeFlex; back em FastAPI (Python) e Spring Boot (Java/Kotlin) com Hibernate/JPA sobre PostgreSQL. Kanban, code reviews e versionamento no Bitbucket.</li>
@@ -254,7 +330,7 @@
             <details class="span">
               <summary class="span__row">
                 <span class="span__title">Estagiário de Desenvolvimento de Software <em>Projex Consulting</em></span>
-                <span class="span__bar" style="--o:39.2%;--w:2%" aria-hidden="true"><i></i></span>
+                <span class="span__bar" style="--o:38.5%;--w:2%" aria-hidden="true"><i></i></span>
                 <span class="span__when mono">01/2024 &rarr; 02/2024</span>
               </summary>
               <div class="span__body">
@@ -271,12 +347,12 @@
             <details class="span">
               <summary class="span__row">
                 <span class="span__title">Estagiário de Desenvolvimento de Software <em>Polícia Militar do Amazonas</em></span>
-                <span class="span__bar" style="--o:0%;--w:41.2%" aria-hidden="true"><i></i></span>
+                <span class="span__bar" style="--o:0%;--w:40.4%" aria-hidden="true"><i></i></span>
                 <span class="span__when mono">05/2022 &rarr; 02/2024</span>
               </summary>
               <div class="span__body">
                 <ul>
-                  <li>Sistema de cadastro e habilitação de empresas fornecedoras de fardamento, com fluxo de aprovação, em Angular com Firebase como backend completo (autenticação, banco NoSQL e storage) &mdash; em uso real, com suporte direto aos fornecedores.</li>
+                  <li>Sistema de cadastro e habilitação de empresas fornecedoras de fardamento, com fluxo de aprovação, em Angular com Firebase como backend completo (autenticação, banco NoSQL e storage), em uso real e com suporte direto aos fornecedores.</li>
                   <li>Evolução do front (Angular) e consultas ao banco de dados no backend de um sistema de controle de armamento em produção, com mais de 5.000 armas registradas.</li>
                   <li>Sistema de checklist para conferência de patrimônio da corporação (viaturas, lanchas e equipamentos) e o sistema do Boletim Geral da PMAM (publicação oficial da corporação, equivalente a um diário oficial) em Spring Boot, Hibernate/JPA e PostgreSQL, com APIs REST documentadas em Swagger.</li>
                   <li>Metodologia Kanban e versionamento no GitHub.</li>
@@ -295,24 +371,29 @@
     <div class="wrap">
       <div class="section__head">
         <span class="section__idx">03</span>
-        <h2 class="section__kicker" id="habilidades-title">Mapa de habilidades</h2>
+        <span class="section__kicker">skills.json</span>
         <span class="section__rule"></span>
       </div>
+      <h2 class="section__title" id="habilidades-title">Mapa de habilidades</h2>
       <p class="section__intro">
-        Três níveis: <strong>domínio</strong> &rarr; <strong>tecnologia</strong> &rarr;
-        <strong>ferramenta / prática</strong>. Use os botões pra abrir nível a nível, ou clique
-        direto num nó; arraste pra mover e a roda pra dar zoom.
+        Organizado em três níveis: <strong>área</strong> &rarr; <strong>tecnologia</strong> &rarr;
+        <strong>ferramenta</strong>.<span class="skillmap-hint"> Use os botões para abrir os níveis ou clique
+        num item para expandir.</span>
       </p>
 
-      <div class="skillmap-ctrl" role="group" aria-label="Nível de detalhe do mapa">
-        <button type="button" data-mm-level="1">Nível 1</button>
-        <button type="button" data-mm-level="2" aria-pressed="true">Nível 2</button>
-        <button type="button" data-mm-level="99">Tudo</button>
-        <button type="button" data-mm-fit>Ajustar</button>
-      </div>
+      <div class="card win skillmap-win">
+        <div class="win__bar">
+          <span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="win__title">skills.map</span>
+          <div class="skillmap-ctrl" role="group" aria-label="Nível de detalhe do mapa">
+            <button type="button" data-mm-level="1">Nível 1</button>
+            <button type="button" data-mm-level="2" aria-pressed="true">Nível 2</button>
+            <button type="button" data-mm-level="99">Tudo</button>
+          </div>
+        </div>
 
-      <div class="skillmap" role="img" aria-label="Mapa mental de habilidades: frontend, backend, dados, APIs e arquitetura, testes, DevOps, métricas e métodos">
-        <script type="text/template">
+        <div class="skillmap" role="img" aria-label="Mapa mental de habilidades: frontend, backend, dados, APIs e arquitetura, testes, DevOps, métricas e métodos">
+          <script type="text/template">
 # Carlos Mafra · Full Stack
 
 ## Frontend
@@ -379,87 +460,86 @@
 ### Scrum
 ### Kanban
 ### Code Review
-        </script>
+          </script>
+        </div>
       </div>
 
-      <noscript>
-        <div class="skills">
-          <article class="skills__group">
-            <h3>Frontend</h3>
-            <dl>
-              <div><dt>Angular</dt><dd>TypeScript, PrimeNG, PrimeFlex, Chart.js</dd></div>
-              <div><dt>Base web</dt><dd>HTML, CSS</dd></div>
-            </dl>
-          </article>
-          <article class="skills__group">
-            <h3>Backend</h3>
-            <dl>
-              <div><dt>Spring Boot</dt><dd>Java, Kotlin, Hibernate/JPA, Swagger/OpenAPI</dd></div>
-              <div><dt>FastAPI</dt><dd>Python, Swagger/OpenAPI</dd></div>
-            </dl>
-          </article>
-          <article class="skills__group">
-            <h3>Dados</h3>
-            <dl>
-              <div><dt>PostgreSQL</dt><dd>modelagem, consultas, persistência</dd></div>
-              <div><dt>SQL Server</dt><dd>sistema de changeover</dd></div>
-              <div><dt>Firebase</dt><dd>auth, NoSQL, storage</dd></div>
-            </dl>
-          </article>
-          <article class="skills__group">
-            <h3>APIs &amp; arquitetura</h3>
-            <dl>
-              <div><dt>REST + WebSocket</dt><dd>tempo real, Swagger/OpenAPI</dd></div>
-              <div><dt>Apache Kafka</dt><dd>tópicos, consumers/workers</dd></div>
-              <div><dt>Clean Code / SOLID</dt><dd>modular, desacoplado</dd></div>
-            </dl>
-          </article>
-          <article class="skills__group">
-            <h3>Testes &amp; qualidade</h3>
-            <dl>
-              <div><dt>Playwright</dt><dd>E2E, Page Object Model, TypeScript</dd></div>
-              <div><dt>K6</dt><dd>carga e performance</dd></div>
-              <div><dt>Postman</dt><dd>fluxos de API encadeados</dd></div>
-            </dl>
-          </article>
-          <article class="skills__group">
-            <h3>DevOps</h3>
-            <dl>
-              <div><dt>Git</dt><dd>GitHub, GitLab, Bitbucket</dd></div>
-              <div><dt>Docker</dt><dd>ambientes padronizados</dd></div>
-              <div><dt>CI/CD</dt><dd>GitLab Pipelines</dd></div>
-            </dl>
-          </article>
-          <article class="skills__group">
-            <h3>Métricas &amp; docs</h3>
-            <dl>
-              <div><dt>Grafana + InfluxDB</dt><dd>dashboards de qualidade</dd></div>
-              <div><dt>XWiki</dt><dd>documentação e evidências</dd></div>
-              <div><dt>WAHA</dt><dd>integração WhatsApp</dd></div>
-            </dl>
-          </article>
-          <article class="skills__group">
-            <h3>Métodos</h3>
-            <dl>
-              <div><dt>Scrum / Kanban</dt><dd>times ágeis</dd></div>
-              <div><dt>Code Review</dt><dd>padrões de qualidade</dd></div>
-            </dl>
-          </article>
-        </div>
-      </noscript>
+      <div class="skills" aria-label="Habilidades por área">
+        <article class="card skills__group">
+          <h3>Frontend</h3>
+          <dl>
+            <div><dt>Angular</dt><dd>TypeScript, PrimeNG, PrimeFlex, Chart.js</dd></div>
+            <div><dt>Base web</dt><dd>HTML, CSS</dd></div>
+          </dl>
+        </article>
+        <article class="card skills__group">
+          <h3>Backend</h3>
+          <dl>
+            <div><dt>Spring Boot</dt><dd>Java, Kotlin, Hibernate/JPA, Swagger/OpenAPI</dd></div>
+            <div><dt>FastAPI</dt><dd>Python, Swagger/OpenAPI</dd></div>
+          </dl>
+        </article>
+        <article class="card skills__group">
+          <h3>Dados</h3>
+          <dl>
+            <div><dt>PostgreSQL</dt><dd>modelagem, consultas, persistência</dd></div>
+            <div><dt>SQL Server</dt><dd>sistema de changeover</dd></div>
+            <div><dt>Firebase</dt><dd>auth, NoSQL, storage</dd></div>
+          </dl>
+        </article>
+        <article class="card skills__group">
+          <h3>APIs &amp; arquitetura</h3>
+          <dl>
+            <div><dt>REST + WebSocket</dt><dd>tempo real, Swagger/OpenAPI</dd></div>
+            <div><dt>Apache Kafka</dt><dd>tópicos, consumers/workers</dd></div>
+            <div><dt>Clean Code / SOLID</dt><dd>modular, desacoplado</dd></div>
+          </dl>
+        </article>
+        <article class="card skills__group">
+          <h3>Testes &amp; qualidade</h3>
+          <dl>
+            <div><dt>Playwright</dt><dd>E2E, Page Object Model, TypeScript</dd></div>
+            <div><dt>K6</dt><dd>carga e performance</dd></div>
+            <div><dt>Postman</dt><dd>fluxos de API encadeados</dd></div>
+          </dl>
+        </article>
+        <article class="card skills__group">
+          <h3>DevOps</h3>
+          <dl>
+            <div><dt>Git</dt><dd>GitHub, GitLab, Bitbucket</dd></div>
+            <div><dt>Docker</dt><dd>ambientes padronizados</dd></div>
+            <div><dt>CI/CD</dt><dd>GitLab Pipelines</dd></div>
+          </dl>
+        </article>
+        <article class="card skills__group">
+          <h3>Métricas &amp; docs</h3>
+          <dl>
+            <div><dt>Grafana + InfluxDB</dt><dd>dashboards de qualidade</dd></div>
+            <div><dt>XWiki</dt><dd>documentação e evidências</dd></div>
+            <div><dt>WAHA</dt><dd>integração WhatsApp</dd></div>
+          </dl>
+        </article>
+        <article class="card skills__group">
+          <h3>Métodos</h3>
+          <dl>
+            <div><dt>Scrum / Kanban</dt><dd>times ágeis</dd></div>
+            <div><dt>Code Review</dt><dd>padrões de qualidade</dd></div>
+          </dl>
+        </article>
+      </div>
 
-      <div class="practices">
-        <article class="practice">
-          <div class="practice__head"><h3>Base de engenharia</h3><span class="pill"><span class="pill__dot pill__dot--ok"></span>Aplicado</span></div>
+      <div class="bento bento--practices">
+        <article class="card practice">
+          <div class="practice__head"><h3>Boas práticas</h3><span class="pill"><span class="pill__dot pill__dot--ok"></span>No dia a dia</span></div>
           <ul>
             <li>Clean Code <span>desacoplamento</span></li>
             <li>SOLID <span>code review</span></li>
-            <li>Orientação a Objetos <span>base</span></li>
+            <li>Orientação a Objetos <span>modelagem</span></li>
             <li>Page Object Model <span>testes E2E</span></li>
           </ul>
         </article>
-        <article class="practice">
-          <div class="practice__head"><h3>Arquitetura &amp; entrega</h3><span class="pill"><span class="pill__dot pill__dot--ok"></span>Ativo</span></div>
+        <article class="card practice">
+          <div class="practice__head"><h3>Arquitetura &amp; entrega</h3><span class="pill"><span class="pill__dot pill__dot--ok"></span>Em produção</span></div>
           <ul>
             <li>REST + WebSocket <span>contratos</span></li>
             <li>Swagger/OpenAPI <span>documentação</span></li>
@@ -467,14 +547,14 @@
             <li>Scrum / Kanban <span>times ágeis</span></li>
           </ul>
         </article>
-        <article class="practice">
-          <div class="practice__head"><h3>Cursos</h3><span class="pill"><span class="pill__dot pill__dot--dim"></span>Complementares</span></div>
-          <ul>
-            <li>Desenvolvimento Web &middot; JS, TS e Angular</li>
-            <li>Introdução a Python para Ciência de Dados</li>
-            <li>Princípios de Machine Learning &middot; Python</li>
-            <li>Java e Orientação a Objetos</li>
-            <li>Fundamentos de Ethical Hacking</li>
+        <article class="card practice practice--courses">
+          <div class="practice__head"><h3>Cursos complementares</h3><span class="pill"><span class="pill__dot pill__dot--dim"></span>5 cursos</span></div>
+          <ul class="courses">
+            <li><span class="courses__n mono">01</span><strong>Desenvolvimento Web</strong><span class="courses__d mono">JavaScript, TypeScript e Angular</span></li>
+            <li><span class="courses__n mono">02</span><strong>Java e Orientação a Objetos</strong><span class="courses__d mono">Fundamentos da linguagem</span></li>
+            <li><span class="courses__n mono">03</span><strong>Python para Ciência de Dados</strong><span class="courses__d mono">Introdução</span></li>
+            <li><span class="courses__n mono">04</span><strong>Machine Learning</strong><span class="courses__d mono">Princípios, com Python</span></li>
+            <li><span class="courses__n mono">05</span><strong>Ethical Hacking</strong><span class="courses__d mono">Fundamentos de segurança</span></li>
           </ul>
         </article>
       </div>
@@ -486,69 +566,111 @@
     <div class="wrap">
       <div class="section__head">
         <span class="section__idx">04</span>
-        <h2 class="section__kicker" id="projetos-title">Projetos em destaque</h2>
+        <span class="section__kicker">projetos/</span>
         <span class="section__rule"></span>
       </div>
+      <h2 class="section__title" id="projetos-title">Projetos em destaque</h2>
 
-      <article class="project">
-        <p class="project__num">01</p>
-        <div class="project__main">
+      <h3 class="subhead mono"><span>$</span> ls projetos/pessoais <em>&middot; código aberto</em></h3>
+      <div class="bento bento--pcards">
+        <article class="card pcard">
+          <a class="pcard__shot" href="https://carlosmafraa.github.io/pokedex/" target="_blank" rel="noopener" aria-label="Abrir a Pokédex no ar">
+            <span class="pcard__url mono"><span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span>carlosmafraa.github.io/pokedex</span>
+            <img src="assets/img/projetos/pokedex.jpg" alt="Tela inicial da Pokédex com a grade de Pokémon da primeira geração" width="1280" height="800" loading="lazy">
+          </a>
+          <div class="pcard__body">
+            <div class="pcard__head"><h3>Pokédex</h3><span class="pill"><span class="pill__dot pill__dot--ok"></span>No ar</span></div>
+            <p>Pokédex consumindo a PokéAPI com todas as gerações em scroll infinito, busca por nome ou número, filtro por tipo e detalhe em rota própria. Cache em IndexedDB: funciona offline depois da primeira visita.</p>
+            <ul class="tags mono"><li>Angular 20</li><li>Signals</li><li>PrimeNG</li><li>RxJS</li><li>IndexedDB</li><li>Playwright</li></ul>
+            <div class="pcard__links">
+              <a class="btn btn--ghost btn--sm" href="https://carlosmafraa.github.io/pokedex/" target="_blank" rel="noopener">Ver online <span aria-hidden="true">&#8599;</span></a>
+              <a class="btn btn--ghost btn--sm" href="https://github.com/CarlosMafraa/pokedex" target="_blank" rel="noopener">Código <span aria-hidden="true">&#8599;</span></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card pcard">
+          <a class="pcard__shot" href="https://carlosmafraa.github.io/pdf-cleaner/" target="_blank" rel="noopener" aria-label="Abrir o PDF Cleaner no ar">
+            <span class="pcard__url mono"><span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span>carlosmafraa.github.io/pdf-cleaner</span>
+            <img src="assets/img/projetos/pdf-cleaner.jpg" alt="Tela inicial do PDF Cleaner com a área para arrastar arquivos PDF" width="1280" height="800" loading="lazy">
+          </a>
+          <div class="pcard__body">
+            <div class="pcard__head"><h3>PDF Cleaner</h3><span class="pill"><span class="pill__dot pill__dot--ok"></span>No ar</span></div>
+            <p>Remove assinaturas digitais, marcas d'água e bordas de PDFs com réguas arrastáveis sobre o documento e preview antes/depois. Processamento 100% no navegador: nenhum arquivo sai da máquina.</p>
+            <ul class="tags mono"><li>Angular 22</li><li>Zoneless</li><li>Tailwind</li><li>pdf-lib</li><li>pdf.js</li><li>Playwright</li></ul>
+            <div class="pcard__links">
+              <a class="btn btn--ghost btn--sm" href="https://carlosmafraa.github.io/pdf-cleaner/" target="_blank" rel="noopener">Ver online <span aria-hidden="true">&#8599;</span></a>
+              <a class="btn btn--ghost btn--sm" href="https://github.com/CarlosMafraa/pdf-cleaner" target="_blank" rel="noopener">Código <span aria-hidden="true">&#8599;</span></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card pcard pcard--wide">
+          <a class="pcard__shot" href="https://juriflow.mafrasolutions.workers.dev/login" target="_blank" rel="noopener" aria-label="Abrir o JuriFlow no ar">
+            <span class="pcard__url mono"><span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span>juriflow.mafrasolutions.workers.dev</span>
+            <img src="assets/img/projetos/juriflow.jpg" alt="Tela de login do JuriFlow: acompanhamento processual com notificação automática" width="1280" height="800" loading="lazy">
+          </a>
+          <div class="pcard__body">
+            <div class="pcard__head"><h3>JuriFlow</h3><span class="pill"><span class="pill__dot pill__dot--warn"></span>Em construção</span></div>
+            <p>SaaS multi-tenant para escritórios de advocacia acompanharem processos, clientes e movimentações, com aviso automático por WhatsApp e trilha de auditoria. Cada escritório fica isolado com Row Level Security no Postgres, testado com pgTAP.</p>
+            <div class="pipeline" aria-label="Pipeline do JuriFlow">
+              <p class="pipeline__title mono">pipeline</p>
+              <ol class="mono">
+                <li>Coletor <em>Playwright</em></li>
+                <li>Normalizador</li>
+                <li>Detector de mudanças</li>
+                <li>Motor de regras</li>
+                <li>WhatsApp <em>WAHA</em></li>
+                <li>Auditoria</li>
+              </ol>
+            </div>
+            <ul class="tags mono"><li>Angular 18</li><li>Supabase</li><li>Postgres RLS</li><li>pgTAP</li><li>Playwright</li><li>WAHA</li><li>Cloudflare</li></ul>
+            <div class="pcard__links">
+              <a class="btn btn--ghost btn--sm" href="https://juriflow.mafrasolutions.workers.dev/login" target="_blank" rel="noopener">Ver online <span aria-hidden="true">&#8599;</span></a>
+              <a class="btn btn--ghost btn--sm" href="https://github.com/CarlosMafraa/juriflow" target="_blank" rel="noopener">Código <span aria-hidden="true">&#8599;</span></a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <h3 class="subhead mono"><span>$</span> ls projetos/profissionais <em>&middot; código privado</em></h3>
+      <div class="bento bento--projects">
+        <article class="card project">
+          <div class="project__top"><span class="project__num">01</span><span class="project__priv mono">&#9679; privado</span></div>
           <h3>Sistema de gestão de changeover</h3>
-          <p class="project__tag mono">Foxconn &middot; 2025 &rarr; atual &middot; Desenvolvedor Full-Stack</p>
+          <p class="project__tag mono">Foxconn &middot; 2025 &rarr; 2026 &middot; Desenvolvedor Full-Stack</p>
           <p class="project__desc">Sistema distribuído em vários repositórios (backend, frontend, integração e WhatsApp/WAHA) para gerir a troca de linha de produção, com Spring Boot, Hibernate/JPA, Angular, SQL Server e Docker. Integração orientada a eventos com Apache Kafka entre o banco e o backend. Deploy semi-automatizado em pipeline GitLab.</p>
-        </div>
-        <div class="project__side">
-          <span class="pill"><span class="pill__dot pill__dot--ok"></span>Impacto</span>
-          <p>Monitora mais de 60 atividades por changeover e alerta o time via WhatsApp assim que o tempo previsto de uma atividade estoura &mdash; gargalo que antes passava despercebido.</p>
+          <div class="project__impact"><span class="project__impact-k mono">impacto</span><p>Monitora mais de 60 atividades por changeover e alerta o time via WhatsApp assim que o tempo previsto de uma atividade estoura. Antes, esse gargalo passava despercebido.</p></div>
           <p class="mono project__stack">Spring Boot &middot; Hibernate/JPA &middot; Angular &middot; SQL Server &middot; Apache Kafka &middot; Docker &middot; GitLab CI/CD &middot; WAHA</p>
-          <p class="mono project__priv">Código privado</p>
-        </div>
-      </article>
+        </article>
 
-      <article class="project">
-        <p class="project__num">02</p>
-        <div class="project__main">
+        <article class="card project">
+          <div class="project__top"><span class="project__num">02</span><span class="project__priv mono">&#9679; privado</span></div>
           <h3>Automação de testes E2E e de carga</h3>
-          <p class="project__tag mono">Foxconn &middot; 2025 &rarr; atual &middot; Desenvolvedor Full-Stack</p>
+          <p class="project__tag mono">Foxconn &middot; 2025 &rarr; 2026 &middot; Desenvolvedor Full-Stack</p>
           <p class="project__desc">Suíte criada do zero para um sistema corporativo: cerca de 10 cenários E2E críticos em Playwright/TypeScript com Page Object Model, carga com K6, dashboards em Grafana/InfluxDB e ambientes de teste containerizados com Docker, tudo integrado ao CI/CD.</p>
-        </div>
-        <div class="project__side">
-          <span class="pill"><span class="pill__dot pill__dot--ok"></span>Impacto</span>
-          <p>Validação de fluxo caiu de aprox. 2&ndash;3 min manuais para aprox. 20s na UI e 3s na API; a carga com K6 expôs aprox. 30% de timeouts causados por uma VM de teste subdimensionada, antes de chegar em produção.</p>
+          <div class="project__impact"><span class="project__impact-k mono">impacto</span><p>Validação de fluxo caiu de aprox. 2&ndash;3 min manuais para aprox. 20s na UI e 3s na API; a carga com K6 expôs aprox. 30% de timeouts causados por uma VM de teste subdimensionada, antes de chegar em produção.</p></div>
           <p class="mono project__stack">Playwright &middot; K6 &middot; TypeScript &middot; Grafana &middot; InfluxDB &middot; Docker &middot; XWiki &middot; Postman</p>
-          <p class="mono project__priv">Código privado</p>
-        </div>
-      </article>
+        </article>
 
-      <article class="project">
-        <p class="project__num">03</p>
-        <div class="project__main">
-          <h3>Taurus &mdash; módulos de compras e estoque</h3>
+        <article class="card project">
+          <div class="project__top"><span class="project__num">03</span><span class="project__priv mono">&#9679; privado</span></div>
+          <h3>Taurus: módulos de compras e estoque</h3>
           <p class="project__tag mono">Projex Consulting &middot; 2024 &rarr; 2025 &middot; Desenvolvedor Full-Stack</p>
-          <p class="project__desc">Módulos de um ERP em produção para 4 clientes empresariais. O módulo de compras compara descontos por produto e por combo e aponta a opção mais vantajosa; inclui carrossel de fotos de ordens de serviço (Angular + CSS) e uma aplicação de leilão em tempo real via WebSocket.</p>
-        </div>
-        <div class="project__side">
-          <span class="pill"><span class="pill__dot pill__dot--ok"></span>Impacto</span>
-          <p>Código em produção para clientes empresariais, com decisão de compra assistida e atualização de lances em tempo real para todos os participantes conectados.</p>
+          <p class="project__desc">Módulos de um ERP em produção em 4 empresas, usado no dia a dia pelas equipes de cada uma. O módulo de compras compara descontos por produto e por combo e aponta a opção mais vantajosa; inclui carrossel de fotos de ordens de serviço (Angular + CSS) e uma aplicação de leilão em tempo real via WebSocket.</p>
+          <div class="project__impact"><span class="project__impact-k mono">impacto</span><p>Código em produção nas 4 empresas, apoiando as equipes de compras e estoque com decisão de compra assistida e atualização de lances em tempo real para todos os participantes conectados.</p></div>
           <p class="mono project__stack">Angular &middot; PrimeNG &middot; PrimeFlex &middot; Spring Boot &middot; Kotlin &middot; FastAPI &middot; Hibernate/JPA &middot; PostgreSQL &middot; WebSocket</p>
-          <p class="mono project__priv">Código privado</p>
-        </div>
-      </article>
+        </article>
 
-      <article class="project">
-        <p class="project__num">04</p>
-        <div class="project__main">
+        <article class="card project">
+          <div class="project__top"><span class="project__num">04</span><span class="project__priv mono">&#9679; privado</span></div>
           <h3>Sistemas internos da PMAM</h3>
           <p class="project__tag mono">Polícia Militar do Amazonas &middot; 2022 &rarr; 2024 &middot; Estágio</p>
           <p class="project__desc">Cadastro e habilitação de fornecedores de fardamento (Angular com Firebase como backend completo), evolução do front de um sistema de controle de armamento em produção, checklist de conferência de patrimônio e o sistema do Boletim Geral da PMAM em Spring Boot, Hibernate/JPA e PostgreSQL.</p>
-        </div>
-        <div class="project__side">
-          <span class="pill"><span class="pill__dot pill__dot--ok"></span>Impacto</span>
-          <p>Sistemas em uso real na corporação &mdash; o de controle de armamento com mais de 5.000 armas registradas.</p>
+          <div class="project__impact"><span class="project__impact-k mono">impacto</span><p>Sistemas em uso real na corporação, incluindo o de controle de armamento, com mais de 5.000 armas registradas.</p></div>
           <p class="mono project__stack">Angular &middot; Firebase &middot; Spring Boot &middot; Hibernate/JPA &middot; PostgreSQL &middot; Swagger &middot; Git</p>
-          <p class="mono project__priv">Código privado</p>
-        </div>
-      </article>
+        </article>
+      </div>
     </div>
   </section>
 
@@ -557,21 +679,22 @@
     <div class="wrap">
       <div class="section__head">
         <span class="section__idx">05</span>
-        <h2 class="section__kicker" id="formacao-title">Formação acadêmica</h2>
+        <span class="section__kicker">formacao.yml</span>
         <span class="section__rule"></span>
       </div>
-      <ul class="edu">
-        <li>
+      <h2 class="section__title" id="formacao-title">Formação acadêmica</h2>
+      <ul class="bento edu">
+        <li class="card">
           <span class="edu__when mono">2021 &rarr; 2027</span>
           <span class="edu__what"><strong>Tecnólogo em Análise e Desenvolvimento de Sistemas</strong><span class="mono">Instituto Federal do Amazonas &middot; IFAM</span></span>
           <span class="pill"><span class="pill__dot pill__dot--ok"></span>Em andamento</span>
         </li>
-        <li>
+        <li class="card">
           <span class="edu__when mono">2015 &rarr; 2020</span>
           <span class="edu__what"><strong>Bacharelado em Engenharia Civil</strong><span class="mono">Faculdade Martha Falcão &middot; FMF/Wyden</span></span>
           <span class="pill"><span class="pill__dot pill__dot--dim"></span>Concluído</span>
         </li>
-        <li>
+        <li class="card">
           <span class="edu__when mono">2016 &rarr; 2018</span>
           <span class="edu__what"><strong>Técnico em Construção de Edifícios</strong><span class="mono">Instituto Federal do Amazonas &middot; IFAM</span></span>
           <span class="pill"><span class="pill__dot pill__dot--dim"></span>Concluído</span>
@@ -583,16 +706,37 @@
   <!-- CONTATO -->
   <section class="section section--contato" id="contato" aria-labelledby="contato-title">
     <div class="wrap">
-      <div class="section__head">
-        <span class="section__idx">06</span>
-        <h2 class="section__kicker" id="contato-title">Contato</h2>
-        <span class="section__rule"></span>
-      </div>
-      <h3 class="contato__title">Aberto a conversas sobre desenvolvimento full stack, arquitetura e qualidade de software.</h3>
-      <div class="contato__actions">
-        <a class="btn btn--ghost" href="https://www.linkedin.com/in/carlos-mafraa/" target="_blank" rel="noopener">LinkedIn <span aria-hidden="true">&#8599;</span></a>
-        <a class="btn btn--ghost" href="https://github.com/CarlosMafraa" target="_blank" rel="noopener">GitHub <span aria-hidden="true">&#8599;</span></a>
-        <a class="btn btn--ghost" href="tel:+5592985276297">(92) 9 8527-6297</a>
+      <div class="card contact">
+        <div class="contact__main">
+          <div class="section__head">
+            <span class="section__idx">06</span>
+            <span class="section__kicker">contato.sh</span>
+            <span class="section__rule"></span>
+          </div>
+          <h2 class="contato__title" id="contato-title">Tem uma ideia guardada? <span class="grad">Vamos tirar do papel.</span></h2>
+          <p class="contato__lead">
+            Um sistema para o seu negócio, uma automação que poupa horas da sua equipe, um app que
+            ainda só existe na sua cabeça. A conversa começa pelo seu objetivo: o que precisa
+            funcionar, para quem e por quê. A tecnologia vem depois, a serviço disso.
+          </p>
+          <div class="contato__actions">
+            <a class="btn btn--solid" href="https://wa.me/5592985276297?text=Ol%C3%A1%2C%20Carlos!%20Tenho%20uma%20ideia%20e%20queria%20conversar." target="_blank" rel="noopener">Contar minha ideia <span aria-hidden="true">&#8599;</span></a>
+            <a class="btn btn--ghost" href="https://www.linkedin.com/in/carlos-mafraa/" target="_blank" rel="noopener">LinkedIn <span aria-hidden="true">&#8599;</span></a>
+            <a class="btn btn--ghost" href="https://github.com/CarlosMafraa" target="_blank" rel="noopener">GitHub <span aria-hidden="true">&#8599;</span></a>
+          </div>
+        </div>
+        <div class="win contact__term" aria-hidden="true">
+          <div class="win__bar"><span class="win__dots"><i></i><i></i><i></i></span><span class="win__title">zsh</span></div>
+<pre class="code"><code><span class="tk-ok">$</span> cat sua-ideia.txt
+<span class="tk-c"># ainda em branco. escreve aí :)</span>
+<span class="tk-ok">$</span> ./tirar-do-papel --ideia sua-ideia.txt
+<span class="tk-s">&#10003;</span> entender o objetivo
+<span class="tk-s">&#10003;</span> desenhar a solução
+<span class="tk-s">&#10003;</span> construir e testar
+<span class="tk-s">&#10003;</span> colocar no ar
+<span class="tk-k">&rarr;</span> pronto pra usar
+<span class="tk-ok">$</span> <span class="caret"></span></code></pre>
+        </div>
       </div>
     </div>
   </section>
@@ -601,7 +745,10 @@
 
 <footer class="site-footer">
   <div class="wrap site-footer__inner mono">
-    <span>Carlos Fabiano Gomes Mafra &middot; Manaus &middot; AM &middot; BR</span>
+    <span class="site-footer__brand">
+      <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d="M52 4A46 46 0 0 0 52 96A37 46 0 0 1 52 4Z" fill="currentColor"></path><path d="M74.5 21.2A33 33 0 1 0 74.5 78.8M41 72V32.5L60 55L79 32.5V72" fill="none" stroke="var(--accent)" stroke-width="7"></path></svg>
+      Carlos Fabiano Gomes Mafra
+    </span>
     <span class="site-footer__links">
       <a href="https://github.com/CarlosMafraa" target="_blank" rel="noopener">GitHub &#8599;</a>
       <a href="https://www.linkedin.com/in/carlos-mafraa/" target="_blank" rel="noopener">LinkedIn &#8599;</a>

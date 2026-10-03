@@ -1,17 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Inter Tight, Inter, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <radialGradient id="glow" cx="0.82" cy="0.3" r="0.6"><stop offset="0" stop-color="#e6a46c" stop-opacity="0.22"/><stop offset="1" stop-color="#e6a46c" stop-opacity="0"/></radialGradient>
+  </defs>
   <rect width="1200" height="630" fill="#0b0b0b"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
   <g opacity="0.06" stroke="#ffffff">
     <path d="M0 96h1200M0 192h1200M0 288h1200M0 384h1200M0 480h1200M0 576h1200"/>
     <path d="M96 0v630M192 0v630M288 0v630M384 0v630M480 0v630M576 0v630M672 0v630M768 0v630M864 0v630M960 0v630M1056 0v630M1152 0v630"/>
   </g>
-  <g transform="translate(96 96)">
-    <rect width="28" height="28" fill="#ffffff"/>
-    <rect x="34" width="28" height="28" fill="#52a8ff"/>
-    <rect y="34" width="28" height="28" fill="#52a8ff"/>
-    <rect x="34" y="34" width="28" height="28" fill="#ffffff"/>
-  </g>
-  <text x="176" y="132" fill="#ffffff" font-size="30" font-weight="500" letter-spacing="-0.5">Carlos Mafra</text>
-  <text x="96" y="330" fill="#ffffff" font-size="76" font-weight="600" letter-spacing="-3">Desenvolvedor Full Stack</text>
-  <text x="96" y="420" fill="#9a9a9a" font-size="34" font-weight="400" letter-spacing="-0.5">A tela e o que a sustenta &#183; Manaus &#183; AM &#183; BR</text>
-  <text x="96" y="556" fill="#52a8ff" font-size="24" font-family="Geist Mono, ui-monospace, monospace" letter-spacing="1">ANGULAR &#183; SPRING BOOT &#183; FASTAPI &#183; PLAYWRIGHT &#183; K6</text>
+  <svg x="820" y="120" width="300" height="300" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0c08c"/><stop offset="1" stop-color="#c07038"/></linearGradient>
+    <mask id="m" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+      <g fill="none" stroke-linejoin="miter" stroke-miterlimit="10">
+        <path d="M74.5 21.2A33 33 0 1 0 74.5 78.8M41 72V32.5L60 55L79 32.5V72" stroke="#fff" stroke-width="9"/>
+        <path d="M74.5 21.2A33 33 0 1 0 74.5 78.8M41 72V32.5L60 55L79 32.5V72" stroke="#000" stroke-width="2.6"/>
+      </g>
+    </mask>
+  </defs>
+  <path d="M52 4A46 46 0 0 0 52 96A37 46 0 0 1 52 4Z" fill="#f2f2f2"/>
+  <rect width="100" height="100" fill="url(#g)" mask="url(#m)"/>
+  </svg>
+  <text x="96" y="150" fill="#e6a46c" font-size="24" font-family="Geist Mono, ui-monospace, monospace" letter-spacing="3">CARLOS MAFRA</text>
+  <text x="96" y="300" fill="#ffffff" font-size="76" font-weight="600" letter-spacing="-3">Desenvolvedor</text>
+  <text x="96" y="384" fill="#ffffff" font-size="76" font-weight="600" letter-spacing="-3">Full Stack</text>
+  <text x="96" y="460" fill="#9a9a9a" font-size="32" font-weight="400" letter-spacing="-0.5">Sistemas web de ponta a ponta</text>
+  <text x="96" y="556" fill="#e6a46c" font-size="22" font-family="Geist Mono, ui-monospace, monospace" letter-spacing="1">ANGULAR &#183; SPRING BOOT &#183; FASTAPI &#183; KAFKA &#183; PLAYWRIGHT &#183; K6</text>
 </svg>

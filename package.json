@@ -1,0 +1,14 @@
+{
+  "name": "portfolio-carlos-mafra",
+  "private": true,
+  "description": "Portfólio estático. O package.json existe só para os testes E2E; o site não tem build.",
+  "scripts": {
+    "serve": "node tests/serve.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0"
+  }
+}

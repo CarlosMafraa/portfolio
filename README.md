@@ -11,13 +11,19 @@ index.html            página principal
 .nojekyll             pula o build Jekyll do GitHub Pages (deploy mais rápido, sem surpresas)
 assets/
   css/style.css       todo o estilo, com tema claro/escuro por variáveis
-  js/main.js          tema, menu mobile, mapa mental (markmap)
-  img/favicon.svg     ícone da aba
+  js/main.js          tema, menu mobile, animações, mapa mental (markmap)
+  img/logo.svg        logo completa (monograma CM + nome)
+  img/favicon.svg     ícone da aba (monograma CM)
   img/og.svg          fonte do preview de link
   img/og.png          preview de link 1200x630 (gerado de og.svg)
   cv/                 carlos-mafra-cv.pdf (botão "Baixar CV")
+tests/serve.mjs       servidor estático dos testes (sem dependências)
+tests/e2e/            testes end-to-end com Playwright
+playwright.config.ts  desktop + mobile (Pixel 7)
 design/               export original do Claude Design (ignorado no git)
 ```
+
+O `package.json` existe **só para os testes**; o site continua sem build.
 
 ## Publicar no GitHub Pages
 
@@ -57,3 +63,23 @@ python -m http.server
 ```
 
 Abrir `http://localhost:3000` (ou `:8000`).
+
+## Testes end-to-end
+
+```
+npm install
+npx playwright install chromium
+npm run test:e2e          # roda tudo (desktop + mobile)
+npm run test:e2e:ui       # modo interativo
+npm run test:e2e:report   # abre o último relatório
+```
+
+Cobrem carregamento sem erros de console, assets locais, logo, tema (incluindo
+persistência), menu e scrollspy, animações de entrada, contadores, accordion da
+carreira, mapa de habilidades, `prefers-reduced-motion`, navegação sem JavaScript e a
+página 404. Rodam também no GitHub Actions a cada push (`.github/workflows/e2e.yml`).
+
+## Animações
+
+Todas são progressivas: sem JS o conteúdo aparece direto, e com
+`prefers-reduced-motion: reduce` nada se anima (tudo já aparece no estado final).
