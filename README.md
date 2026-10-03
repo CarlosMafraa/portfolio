@@ -14,6 +14,9 @@ assets/
   js/main.js          tema, menu mobile, animações, mapa mental (markmap)
   img/logo.svg        logo completa (monograma CM + nome)
   img/favicon.svg     ícone da aba (monograma CM)
+  img/icons/          ícones PNG (16 a 512, apple-touch-icon, maskable) gerados por tests/icons.mjs
+favicon.ico           16/32/48 num arquivo só (também gerado por tests/icons.mjs)
+site.webmanifest      nome e ícones para Android / "adicionar à tela inicial"
   img/og.svg          fonte do preview de link
   img/og.png          preview de link 1200x630 (gerado de og.svg)
   cv/                 carlos-mafra-cv.pdf (botão "Baixar CV")
@@ -83,3 +86,9 @@ página 404. Rodam também no GitHub Actions a cada push (`.github/workflows/e2e
 
 Todas são progressivas: sem JS o conteúdo aparece direto, e com
 `prefers-reduced-motion: reduce` nada se anima (tudo já aparece no estado final).
+
+## Ícones
+
+Todos os ícones saem de `node tests/icons.mjs` (usa o Chromium do Playwright). Se a logo
+mudar, edite o desenho nesse script, rode de novo e suba o número de versão (`?v=4`) nos
+links de ícone do `index.html` e do `404.html`, para os navegadores não usarem o antigo em cache.

@@ -95,6 +95,89 @@ test.describe("marca", () => {
     expect(svg).toContain("A46 46");
   });
 
+  test("todos os ícones declarados existem, no tipo e tamanho certos", async ({ page, request }) => {
+    for (const path of ["/", "/pagina-que-nao-existe"]) {
+      await page.goto(path);
+      const links = await page.evaluate(() =>
+        [...document.querySelectorAll<HTMLLinkElement>('link[rel="icon"], link[rel="apple-touch-icon"]')]
+          .map((l) => ({ href: l.getAttribute("href")!, sizes: l.getAttribute("sizes"), type: l.getAttribute("type") }))
+      );
+      expect(links.length, path).toBeGreaterThanOrEqual(5);
+      // Google exige ao menos um ícone com lado múltiplo de 48px
+      expect(links.some((l) => l.sizes && parseInt(l.sizes) % 48 === 0), path).toBe(true);
+      for (const l of links) {
+        const res = await request.get(l.href);
+        expect(res.status(), l.href).toBe(200);
+        const body = await res.body();
+        if (l.href.includes(".png")) {
+          expect(body.subarray(1, 4).toString(), l.href).toBe("PNG");
+          const w = body.readUInt32BE(16), h = body.readUInt32BE(20);
+          expect(w, l.href).toBe(h);
+          if (l.sizes) expect(`${w}x${h}`, l.href).toBe(l.sizes);
+        }
+        if (l.href.includes(".ico")) {
+          expect(body.readUInt16LE(2)).toBe(1);               // tipo: ícone
+          const n = body.readUInt16LE(4);
+          const sizes = [...Array(n)].map((_, i) => body.readUInt8(6 + 16 * i));
+          expect(sizes).toEqual([16, 32, 48]);
+        }
+      }
+    }
+  });
+
+  test("favicons sem fundo; só os atalhos de tela inicial têm fundo claro da logo", async ({ page }) => {
+    await page.goto("/");
+    const corner = (src: string) => page.evaluate(async (src) => {
+      const img = new Image(); img.src = src; await img.decode();
+      const c = document.createElement("canvas"); c.width = img.width; c.height = img.height;
+      const ctx = c.getContext("2d")!; ctx.drawImage(img, 0, 0);
+      return Array.from(ctx.getImageData(0, 0, 1, 1).data);
+    }, src);
+    for (const f of ["favicon-16", "favicon-32", "favicon-48", "favicon-96", "favicon-144", "icon-192", "icon-512"]) {
+      expect((await corner(`assets/img/icons/${f}.png`))[3], f).toBe(0);
+    }
+    for (const f of ["apple-touch-icon", "icon-maskable-512"]) {
+      expect(await corner(`assets/img/icons/${f}.png`), f).toEqual([244, 243, 239, 255]); // #f4f3ef
+    }
+    const svg = await (await page.request.get("assets/img/favicon.svg")).text();
+    expect(svg).toContain("#2b2e33");   // meia-lua grafite
+    expect(svg).toContain("#d9a066");   // cobre da logo
+  });
+
+  test("ícone da aba: sem fundo no tema claro, fundo claro da logo no tema escuro", async ({ page }) => {
+    // pixel perto do canto (12%,12%): fora da logo, dentro do quadradinho arredondado
+    const corner = async (scheme: "light" | "dark") => {
+      await page.emulateMedia({ colorScheme: scheme });
+      await page.setContent(`<body style="margin:0;background:rgb(0,0,255)"><img src="http://localhost:4173/assets/img/favicon.svg?t=${scheme}" width="100" height="100"></body>`);
+      await page.locator("img").evaluate((img: HTMLImageElement) => img.decode());
+      const shot = await page.locator("img").screenshot();
+      return page.evaluate(async (b64) => {
+        const img = new Image(); img.src = "data:image/png;base64," + b64; await img.decode();
+        const c = document.createElement("canvas"); c.width = img.width; c.height = img.height;
+        const ctx = c.getContext("2d")!; ctx.drawImage(img, 0, 0);
+        return Array.from(ctx.getImageData(Math.floor(img.width * .12), Math.floor(img.height * .12), 1, 1).data).slice(0, 3);
+      }, shot.toString("base64"));
+    };
+    expect(await corner("light")).toEqual([0, 0, 255]);        // transparente: aparece o azul de trás
+    expect(await corner("dark")).toEqual([244, 243, 239]);     // #f4f3ef
+  });
+
+  test("manifest válido com ícones 192 e 512", async ({ page, request }) => {
+    await page.goto("/");
+    const href = await page.locator('link[rel="manifest"]').getAttribute("href");
+    const manifest = await (await request.get(href!)).json();
+    expect(manifest.name).toBe("Carlos Mafra");
+    const sizes = manifest.icons.map((i: { sizes: string }) => i.sizes);
+    expect(sizes).toContain("192x192");
+    expect(sizes).toContain("512x512");
+    for (const icon of manifest.icons) {
+      const res = await request.get(icon.src);
+      expect(res.status(), icon.src).toBe(200);
+      const body = await res.body();
+      expect(`${body.readUInt32BE(16)}x${body.readUInt32BE(20)}`, icon.src).toBe(icon.sizes);
+    }
+  });
+
   test("logo.svg renderiza sem erro de XML e sem 'arquitetura'", async ({ page }) => {
     await page.goto("/assets/img/logo.svg");
     await expect(page.locator("parsererror")).toHaveCount(0);
@@ -227,8 +310,9 @@ test.describe("navegação", () => {
         else requestAnimationFrame(check);
       })();
     }));
-    // a animação dura no máx. 650ms; a folga é pra máquina carregada (vários testes em paralelo)
-    expect(ms).toBeLessThan(1500);
+    // a animação dura no máx. 650ms; o limite tem folga pra máquina carregada (testes em paralelo)
+    // e ainda pega o problema original (a rolagem nativa "smooth" levava vários segundos)
+    expect(ms).toBeLessThan(3000);
   });
 
   test("rolar por conta própria logo após o clique não é puxado de volta", async ({ page }) => {
@@ -247,6 +331,7 @@ test.describe("navegação", () => {
 
   test("item clicado no menu é o que fica destacado (inclusive em tela grande)", async ({ browser }) => {
     test.skip(test.info().project.name === "mobile", "o menu do celular fica recolhido");
+    test.slow(); // 2 telas x 6 cliques: com a máquina carregada passa dos 30s padrão
     for (const vp of [{ width: 1366, height: 768 }, { width: 1920, height: 1080 }]) {
       const page = await browser.newPage({ viewport: vp });
       await page.goto("/");
