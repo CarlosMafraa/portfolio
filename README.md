@@ -19,7 +19,7 @@ favicon.ico           16/32/48 num arquivo só (também gerado por tests/icons.m
 site.webmanifest      nome e ícones para Android / "adicionar à tela inicial"
   img/og.svg          fonte do preview de link
   img/og.png          preview de link 1200x630 (gerado de og.svg)
-  cv/                 carlos-mafra-cv.pdf (botão "Baixar CV")
+  cv/                 carlos-mafra-curriculo-desenvolvedor-full-stack.pdf (botão "Baixar CV")
 tests/serve.mjs       servidor estático dos testes (sem dependências)
 tests/e2e/            testes end-to-end com Playwright
 playwright.config.ts  desktop + mobile (Pixel 7)
@@ -46,7 +46,7 @@ no Pages. Se um dia usar domínio próprio ou renomear o repo para
 
 ## Antes de divulgar — pendências de conteúdo
 
-- [x] **CV**: `assets/cv/carlos-mafra-cv.pdf` no repo; botão "Baixar CV" funciona.
+- [x] **CV**: `assets/cv/carlos-mafra-curriculo-desenvolvedor-full-stack.pdf` no repo; botão "Baixar CV" baixa como `Carlos-Mafra-Curriculo-Desenvolvedor-Full-Stack.pdf`.
 - [x] **Imagem de link (og)**: `og.png` 1200×630 gerado de `og.svg`; `<head>` aponta pra ele.
 - [x] **URL canônica**: `carlosmafraa.github.io/portfolio/` no canonical, Open Graph e JSON-LD.
 - [ ] **Nível de inglês**: considerar um chip no hero com seu nível (o CV cita "trabalho remoto").
@@ -92,3 +92,9 @@ Todas são progressivas: sem JS o conteúdo aparece direto, e com
 Todos os ícones saem de `node tests/icons.mjs` (usa o Chromium do Playwright). Se a logo
 mudar, edite o desenho nesse script, rode de novo e suba o número de versão (`?v=4`) nos
 links de ícone do `index.html` e do `404.html`, para os navegadores não usarem o antigo em cache.
+
+## Tema claro/escuro
+
+Sem escolha salva, o tema segue o horário de Brasília: **06:01 às 18:00 claro, 18:01 às 06:00
+escuro** (função `cmClockTheme` no `<head>` do `index.html` e do `404.html`). Clicando no
+sol/lua, a escolha fica salva no navegador e passa a valer em qualquer horário.

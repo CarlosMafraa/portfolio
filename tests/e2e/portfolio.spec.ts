@@ -2,6 +2,17 @@ import { test, expect, type Page } from "@playwright/test";
 
 const isMobile = (page: Page) => (page.viewportSize()?.width ?? 1366) <= 900;
 
+/** Fixa o relógio num horário de Brasília (UTC-3), para o tema inicial não depender da hora do teste. */
+async function atBrasilia(page: Page, hhmm: string) {
+  const [h, m] = hhmm.split(":").map(Number);
+  await page.clock.setFixedTime(new Date(Date.UTC(2026, 9, 5, h + 3, m)));
+}
+
+/** Abre a página já com um tema escolhido (como se a pessoa tivesse clicado no botão antes). */
+async function withTheme(page: Page, theme: "light" | "dark") {
+  await page.addInitScript((t) => localStorage.setItem("cm-theme", t), theme);
+}
+
 /** Rola até o elemento para disparar as animações de entrada. */
 async function scrollTo(page: Page, selector: string) {
   await page.locator(selector).first().scrollIntoViewIfNeeded();
@@ -223,7 +234,7 @@ test.describe("hero", () => {
   test("botão Baixar CV aponta para o PDF", async ({ page, request }) => {
     await page.goto("/");
     const cv = page.getByRole("link", { name: /Baixar CV/ });
-    await expect(cv).toHaveAttribute("download", "");
+    await expect(cv).toHaveAttribute("download", "Carlos-Mafra-Curriculo-Desenvolvedor-Full-Stack.pdf");
     const res = await request.get((await cv.getAttribute("href"))!);
     expect(res.status()).toBe(200);
     expect(res.headers()["content-type"]).toContain("pdf");
@@ -371,8 +382,75 @@ test.describe("navegação", () => {
 });
 
 test.describe("tema", () => {
+  test("botão mostra sol no tema claro e lua no escuro, com animação de troca", async ({ page }) => {
+    await atBrasilia(page, "12:00");
+    await page.goto("/");
+    const toggle = page.locator(".theme-toggle");
+    const rays = toggle.locator(".theme-toggle__rays");
+    const core = toggle.locator(".theme-toggle__core");
+    await expect(toggle).toHaveAttribute("title", "Mudar para o tema escuro");
+    await expect(rays).toHaveCSS("opacity", "1");
+    expect(await core.evaluate((c) => parseFloat(getComputedStyle(c).r))).toBe(5);
+
+    // a página nova é revelada num círculo a partir do botão
+    const usedTransition = page.evaluate(() => new Promise<boolean>((resolve) => {
+      const orig = document.startViewTransition?.bind(document);
+      if (!orig) return resolve(false);
+      (document as any).startViewTransition = (cb: () => void) => { resolve(true); return orig(cb); };
+    }));
+    await toggle.click();
+    expect(await usedTransition).toBe(true);
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    await expect(toggle).toHaveAttribute("title", "Mudar para o tema claro");
+    await expect(rays).toHaveCSS("opacity", "0");                                           // raios recolhidos
+    await expect.poll(() => core.evaluate((c) => parseFloat(getComputedStyle(c).r))).toBe(8.5); // vira lua
+    await expect(page.locator("html")).not.toHaveClass(/theme-switching/);
+  });
+
+  test("escuro expande a partir do botão; claro recolhe a escuridão para o botão", async ({ page }) => {
+    await atBrasilia(page, "12:00");
+    await page.goto("/");
+    // registra qual camada é animada e em que direção
+    await page.evaluate(() => {
+      (window as any).__anims = [];
+      const orig = Element.prototype.animate;
+      Element.prototype.animate = function (this: Element, kf: any, opts: any) {
+        if (opts?.pseudoElement) (window as any).__anims.push({ pseudo: opts.pseudoElement, from: kf.clipPath?.[0], to: kf.clipPath?.[1] });
+        return orig.call(this, kf, opts);
+      } as any;
+    });
+    const toggle = page.locator(".theme-toggle");
+    const html = page.locator("html");
+    const anims = () => page.evaluate(() => (window as any).__anims);
+
+    await toggle.click();                                     // claro -> escuro
+    await expect(html).toHaveAttribute("data-theme", "dark");
+    await expect.poll(async () => (await anims()).length).toBe(1);
+    let a = (await anims())[0];
+    expect(a.pseudo).toBe("::view-transition-new(root)");      // a página escura cresce
+    expect(a.from).toMatch(/^circle\(0px/);
+    await expect(html).not.toHaveClass(/theme-switching/);
+
+    await toggle.click();                                     // escuro -> claro
+    await expect(html).toHaveAttribute("data-theme", "light");
+    await expect.poll(async () => (await anims()).length).toBe(2);
+    a = (await anims())[1];
+    expect(a.pseudo).toBe("::view-transition-old(root)");      // a página escura encolhe
+    expect(a.to).toMatch(/^circle\(0px/);
+    await expect(html).not.toHaveClass(/theme-switching|theme-to-light/);
+  });
+
+  test("com reduced-motion o tema troca sem animação", async ({ page }) => {
+    await atBrasilia(page, "12:00");
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    await page.locator(".theme-toggle").click();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    await expect(page.locator("html")).not.toHaveClass(/theme-switching/);
+  });
+
   test("alterna claro/escuro e persiste após recarregar", async ({ page }) => {
-    await page.emulateMedia({ colorScheme: "light" });
+    await atBrasilia(page, "12:00");
     await page.goto("/");
     const html = page.locator("html");
     const toggle = page.locator(".theme-toggle");
@@ -391,9 +469,38 @@ test.describe("tema", () => {
     await expect(html).toHaveAttribute("data-theme", "light");
   });
 
-  test("segue o sistema quando não há escolha salva", async ({ page }) => {
-    await page.emulateMedia({ colorScheme: "dark" });
+  // regra: 06:01 às 18:00 claro; 18:01 às 06:00 escuro
+  for (const [hora, tema] of [["05:59", "dark"], ["06:00", "dark"], ["06:01", "light"], ["12:00", "light"], ["18:00", "light"], ["18:01", "dark"], ["23:30", "dark"], ["00:00", "dark"]] as const) {
+    test(`sem escolha salva, às ${hora} de Brasília abre no tema ${tema === "dark" ? "escuro" : "claro"}`, async ({ page }) => {
+      await page.emulateMedia({ colorScheme: tema === "dark" ? "light" : "dark" }); // o sistema NÃO decide mais
+      await atBrasilia(page, hora);
+      await page.goto("/");
+      await expect(page.locator("html")).toHaveAttribute("data-theme", tema);
+    });
+  }
+
+  test("a escolha da pessoa vale mais que o horário", async ({ page }) => {
+    await atBrasilia(page, "22:00");
+    await withTheme(page, "light");
     await page.goto("/");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  });
+
+  test("com a página aberta, o tema vira sozinho às 18:01", async ({ page }) => {
+    // sem a rede animada do topo: com relógio falso, cada quadro dela seria executado ao avançar o tempo
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.clock.install({ time: new Date(Date.UTC(2026, 9, 5, 21, 0)) });  // 18:00 em Brasília (ainda claro)
+    await page.goto("/");
+    // com o relógio falso, a espera automática do Playwright não roda: lê o atributo direto
+    const theme = () => page.evaluate(() => document.documentElement.getAttribute("data-theme"));
+    expect(await theme()).toBe("light");
+    await page.clock.runFor("01:05");                                            // 18:01:05
+    expect(await theme()).toBe("dark");
+  });
+
+  test("a página 404 também usa o horário de Brasília", async ({ page }) => {
+    await atBrasilia(page, "21:00");
+    await page.goto("/nao-existe");
     await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   });
 });
@@ -447,6 +554,30 @@ test.describe("carreira (trace)", () => {
 });
 
 test.describe("mapa de habilidades", () => {
+  test("ao abrir tudo, o texto continua legível e o quadro cresce", async ({ page }) => {
+    test.skip(isMobile(page), "mapa só no desktop");
+    for (const vp of [{ width: 1366, height: 768 }, { width: 1920, height: 1080 }]) {
+      await page.setViewportSize(vp);
+      await page.goto("/");
+      const map = page.locator(".skillmap");
+      await map.scrollIntoViewIfNeeded();
+      await expect(map.locator("svg g.markmap-node").first()).toBeVisible({ timeout: 15000 });
+      const textPx = () => map.locator("svg .markmap-foreign div").evaluateAll((els) =>
+        Math.min(...els.filter((e) => e.getBoundingClientRect().height > 0)
+                       .map((e) => e.getBoundingClientRect().height)));
+      const h0 = (await map.boundingBox())!.height;
+
+      await page.getByRole("button", { name: "Tudo" }).click();
+      await expect.poll(async () => (await map.boundingBox())!.height, { timeout: 5000 }).toBeGreaterThan(h0 + 100);
+      await page.waitForTimeout(600); // fim da animação do zoom
+      expect(await textPx(), `${vp.width}px`).toBeGreaterThanOrEqual(14); // linha de texto >= ~12px de fonte
+
+      // voltar ao nível 1 devolve a altura normal
+      await page.getByRole("button", { name: "Nível 1" }).click();
+      await expect.poll(async () => (await map.boundingBox())!.height, { timeout: 5000 }).toBeLessThan(h0 + 2);
+    }
+  });
+
   test("no celular mostra a grade de cards e não monta o mapa", async ({ page }) => {
     test.skip(!isMobile(page), "só no mobile");
     await page.goto("/");
@@ -516,6 +647,16 @@ test.describe("sem JavaScript", () => {
 });
 
 test.describe("textos", () => {
+  test("portfólio alinhado ao currículo", async ({ page }) => {
+    await page.goto("/");
+    // textContent: inclui os cargos fechados da carreira e o texto do mapa de habilidades
+    const main = (await page.locator("main").textContent())!.replace(/\s+/g, " ");
+    for (const t of ["microsserviços", "Spring Security (JWT)", "Jira", "JUnit", "Gradle", "Maven", "Linux", "Firestore", "Projeto Aranoua",
+                     "Participou da construção de um sistema de checklist", "05/2025 → 09/2026"]) {
+      expect(main, t).toContain(t);
+    }
+  });
+
   test("contato fala com quem tem uma ideia, não pede vaga", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("#contato-title")).toHaveText("Tem uma ideia guardada? Vamos tirar do papel.");
@@ -602,8 +743,11 @@ test.describe("telas grandes", () => {
         hero: document.querySelector(".hero")!.getBoundingClientRect().height,
       }));
       expect(m.wrap / w).toBeGreaterThan(0.66);   // antes: 1180px fixos (61% em 1920, 46% em 2560)
-      expect(m.h1).toBeGreaterThan(70);            // antes: 60px fixos
-      expect(m.body).toBeGreaterThan(16.5);
+      // fontes acompanham a tela, mas sem exagero (chegaram a 92px/20px e ficaram gigantes)
+      expect(m.h1).toBeGreaterThanOrEqual(60);
+      expect(m.h1).toBeLessThanOrEqual(74);
+      expect(m.body).toBeGreaterThanOrEqual(16);
+      expect(m.body).toBeLessThanOrEqual(17);
       expect(m.overflow).toBeLessThanOrEqual(0);
       expect(m.hero).toBeGreaterThan(h * 0.85);
       await page.close();
@@ -671,7 +815,7 @@ test.describe("projetos", () => {
 test.describe("estilo nos dois temas", () => {
   for (const scheme of ["light", "dark"] as const) {
     test(`cards e código legíveis no tema ${scheme}`, async ({ page }) => {
-      await page.emulateMedia({ colorScheme: scheme });
+      await withTheme(page, scheme);
       await page.goto("/");
       const look = await page.evaluate(() => {
         const bg = getComputedStyle(document.body).backgroundColor;

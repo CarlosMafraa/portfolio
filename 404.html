@@ -15,13 +15,32 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600&family=Geist+Mono:wght@400&display=swap">
 <link rel="stylesheet" href="assets/css/style.css">
+<meta name="theme-color" content="#f6f5f1">
 <script>
-  (function () {
+  /* Tema inicial: a escolha salva da pessoa ou, sem escolha, o horário de Brasília
+     (06:01 às 18:00 claro, 18:01 às 06:00 escuro). Roda antes da primeira pintura, sem flash. */
+  window.cmClockTheme = function () {
+    var now = new Date(), h, m;
     try {
-      var t = localStorage.getItem('cm-theme');
-      if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', t);
+      var parts = new Intl.DateTimeFormat("en-US", { timeZone: "America/Sao_Paulo", hour: "numeric", minute: "numeric", hourCycle: "h23" }).formatToParts(now);
+      for (var i = 0; i < parts.length; i++) {
+        if (parts[i].type === "hour") h = +parts[i].value;
+        if (parts[i].type === "minute") m = +parts[i].value;
+      }
     } catch (e) {}
+    if (isNaN(h) || isNaN(m)) { /* Brasília = UTC-3 (sem horário de verão desde 2019) */
+      h = (now.getUTCHours() + 21) % 24; m = now.getUTCMinutes();
+    }
+    var min = h * 60 + m;
+    return min >= 6 * 60 + 1 && min <= 18 * 60 ? "light" : "dark";
+  };
+  (function () {
+    var t;
+    try { t = localStorage.getItem('cm-theme'); } catch (e) {}
+    if (t !== 'light' && t !== 'dark') t = window.cmClockTheme();
+    document.documentElement.setAttribute('data-theme', t);
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', t === 'dark' ? '#050505' : '#f6f5f1');
   })();
 </script>
 <style>

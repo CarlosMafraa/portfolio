@@ -7,9 +7,7 @@
 <title>Carlos Mafra</title>
 <meta name="description" content="Portfólio de Carlos Fabiano Gomes Mafra, desenvolvedor full stack. Angular e TypeScript no front; Spring Boot (Java/Kotlin) e FastAPI (Python) no back; testes com Playwright e K6.">
 <meta name="author" content="Carlos Fabiano Gomes Mafra">
-<meta name="theme-color" content="#fbfbfa" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#fbfbfa">
+<meta name="theme-color" content="#f6f5f1">
 
 <!-- Ajuste a URL abaixo se o repositório mudar de nome ou usar domínio próprio -->
 <link rel="canonical" href="https://carlosmafraa.github.io/portfolio/">
@@ -41,15 +39,30 @@
 <link rel="stylesheet" href="assets/css/style.css">
 
 <script>
-  /* Aplica o tema antes da primeira pintura, sem flash */
-  (function () {
+  /* Tema inicial: a escolha salva da pessoa ou, sem escolha, o horário de Brasília
+     (06:01 às 18:00 claro, 18:01 às 06:00 escuro). Roda antes da primeira pintura, sem flash. */
+  window.cmClockTheme = function () {
+    var now = new Date(), h, m;
     try {
-      var t = localStorage.getItem('cm-theme');
-      if (t !== 'light' && t !== 'dark') {
-        t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      var parts = new Intl.DateTimeFormat("en-US", { timeZone: "America/Sao_Paulo", hour: "numeric", minute: "numeric", hourCycle: "h23" }).formatToParts(now);
+      for (var i = 0; i < parts.length; i++) {
+        if (parts[i].type === "hour") h = +parts[i].value;
+        if (parts[i].type === "minute") m = +parts[i].value;
       }
-      document.documentElement.setAttribute('data-theme', t);
     } catch (e) {}
+    if (isNaN(h) || isNaN(m)) { /* Brasília = UTC-3 (sem horário de verão desde 2019) */
+      h = (now.getUTCHours() + 21) % 24; m = now.getUTCMinutes();
+    }
+    var min = h * 60 + m;
+    return min >= 6 * 60 + 1 && min <= 18 * 60 ? "light" : "dark";
+  };
+  (function () {
+    var t;
+    try { t = localStorage.getItem('cm-theme'); } catch (e) {}
+    if (t !== 'light' && t !== 'dark') t = window.cmClockTheme();
+    document.documentElement.setAttribute('data-theme', t);
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', t === 'dark' ? '#050505' : '#f6f5f1');
     /* habilita as animações de entrada; se o main.js não subir em 3s, mostra tudo */
     var r = document.documentElement;
     r.classList.add('js');
@@ -71,7 +84,7 @@
     "https://github.com/CarlosMafraa",
     "https://www.linkedin.com/in/carlos-mafraa/"
   ],
-  "knowsAbout": ["Angular", "TypeScript", "Spring Boot", "Java", "Kotlin", "Hibernate", "Apache Kafka", "FastAPI", "Python", "PostgreSQL", "SQL Server", "WebSocket", "Playwright", "K6", "Docker", "GitLab CI/CD"],
+  "knowsAbout": ["Angular", "TypeScript", "Spring Boot", "Java", "Kotlin", "Hibernate", "Apache Kafka", "FastAPI", "Python", "PostgreSQL", "SQL Server", "WebSocket", "Playwright", "K6", "Docker", "GitLab CI/CD", "Spring Security", "RxJS", "Microsserviços", "JUnit", "Postman"],
   "alumniOf": [
     { "@type": "CollegeOrUniversity", "name": "Instituto Federal do Amazonas (IFAM)" },
     { "@type": "CollegeOrUniversity", "name": "Faculdade Martha Falcão (FMF/Wyden)" }
@@ -121,9 +134,16 @@
     </nav>
 
     <div class="site-header__actions">
-      <button class="theme-toggle" type="button" aria-label="Alternar tema claro e escuro" aria-pressed="false">
-        <span class="theme-toggle__dot" aria-hidden="true"></span>
-        <span class="theme-toggle__label">Tema</span>
+      <button class="theme-toggle" type="button" aria-label="Alternar tema claro e escuro" aria-pressed="false" title="Mudar para o tema escuro">
+        <!-- sol no tema claro, lua no escuro: os raios recolhem e uma sombra "morde" o círculo -->
+        <svg class="theme-toggle__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <mask id="theme-toggle-cut">
+            <rect width="24" height="24" fill="#fff"></rect>
+            <circle class="theme-toggle__shadow" cx="-6" cy="12" r="7" fill="#000"></circle>
+          </mask>
+          <circle class="theme-toggle__core" cx="12" cy="12" r="5" fill="currentColor" mask="url(#theme-toggle-cut)"></circle>
+          <g class="theme-toggle__rays" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1.6" x2="12" y2="3.6" transform="rotate(0 12 12)"></line><line x1="12" y1="1.6" x2="12" y2="3.6" transform="rotate(45 12 12)"></line><line x1="12" y1="1.6" x2="12" y2="3.6" transform="rotate(90 12 12)"></line><line x1="12" y1="1.6" x2="12" y2="3.6" transform="rotate(135 12 12)"></line><line x1="12" y1="1.6" x2="12" y2="3.6" transform="rotate(180 12 12)"></line><line x1="12" y1="1.6" x2="12" y2="3.6" transform="rotate(225 12 12)"></line><line x1="12" y1="1.6" x2="12" y2="3.6" transform="rotate(270 12 12)"></line><line x1="12" y1="1.6" x2="12" y2="3.6" transform="rotate(315 12 12)"></line></g>
+        </svg>
       </button>
       <a class="btn btn--solid" href="#contato">Tenho uma ideia <span aria-hidden="true">&#8599;</span></a>
     </div>
@@ -157,7 +177,7 @@
       <div class="hero__cta">
         <a class="btn btn--ghost" href="https://github.com/CarlosMafraa" target="_blank" rel="noopener">GitHub <span aria-hidden="true">&#8599;</span></a>
         <a class="btn btn--ghost" href="https://www.linkedin.com/in/carlos-mafraa/" target="_blank" rel="noopener">LinkedIn <span aria-hidden="true">&#8599;</span></a>
-        <a class="btn btn--ghost" href="assets/cv/carlos-mafra-cv.pdf" download>Baixar CV <span aria-hidden="true">&#8595;</span></a>
+        <a class="btn btn--ghost" href="assets/cv/carlos-mafra-curriculo-desenvolvedor-full-stack.pdf" download="Carlos-Mafra-Curriculo-Desenvolvedor-Full-Stack.pdf">Baixar CV <span aria-hidden="true">&#8595;</span></a>
       </div>
      </div>
 
@@ -299,15 +319,16 @@
               </summary>
               <div class="span__body">
                 <ul>
-                  <li>Desenvolveu funcionalidades full stack de um sistema de gestão de changeover (troca de linha de produção) distribuído em vários repositórios (backend, frontend, integração e WhatsApp/WAHA), com Spring Boot (Java/Kotlin), Hibernate/JPA, Angular, SQL Server e Docker.</li>
+                  <li>Desenvolveu funcionalidades full stack de um sistema de gestão de changeover (troca de linha de produção) em arquitetura de microsserviços, distribuído em vários repositórios (backend, frontend, integração e WhatsApp/WAHA), com Spring Boot (Java/Kotlin), Hibernate/JPA, Spring Security (JWT), Maven, Angular (RxJS, Signals), SQL Server e Docker.</li>
                   <li>Conduziu a refatoração e o desacoplamento de um sistema legado, padronizando design, regras de negócio e fluxos.</li>
-                  <li>Integração orientada a eventos com Apache Kafka: alterações no SQL Server (capturadas via triggers) são publicadas em tópicos e processadas por consumers/workers no backend Spring Boot, desacoplando o banco da aplicação.</li>
+                  <li>Arquitetura orientada a eventos (event-driven) com Apache Kafka: alterações no SQL Server (capturadas via triggers) são publicadas em tópicos e processadas por consumers/workers no backend Spring Boot, desacoplando o banco da aplicação.</li>
                   <li>Deu visibilidade a gargalos que antes passavam batido: o sistema monitora mais de 60 atividades por changeover e dispara alerta automático via WhatsApp (WAHA) quando o tempo previsto de uma atividade estoura.</li>
-                  <li>Estruturou a automação de testes do zero: cerca de 10 cenários E2E críticos em Playwright/TypeScript com Page Object Model, reduzindo a validação de cada fluxo de aprox. 2&ndash;3 min manuais para aprox. 20s na UI e 3s na API.</li>
+                  <li>Estruturou a automação de testes do zero: cerca de 10 cenários E2E críticos em Playwright/TypeScript com Page Object Model e testes de API encadeados no Postman, reduzindo a validação de cada fluxo de aprox. 2&ndash;3 min manuais para aprox. 20s na UI e 3s na API.</li>
                   <li>Testes de carga com K6 revelaram aprox. 30% de timeouts em requisições sequenciadas, causados por uma VM de teste subdimensionada, identificando o problema antes da produção.</li>
-                  <li>Ambientes de teste containerizados com Docker, CI/CD no GitLab com deploy semi-automatizado, dashboards de qualidade em Grafana/InfluxDB, documentação em XWiki e code reviews em time Scrum.</li>
+                  <li>Ambientes de teste containerizados com Docker, eliminando inconsistências entre máquinas, e CI/CD no GitLab com deploy semi-automatizado e os testes integrados ao pipeline.</li>
+                  <li>Dashboards de qualidade e performance em Grafana/InfluxDB, documentação técnica centralizada em XWiki, code reviews e decisões de arquitetura em time Scrum (Jira), com testes unitários em JUnit.</li>
                 </ul>
-                <p class="span__tech mono">Spring Boot &middot; Kotlin &middot; Hibernate/JPA &middot; Angular &middot; SQL Server &middot; Apache Kafka &middot; Docker &middot; GitLab CI/CD &middot; WAHA &middot; Playwright &middot; K6 &middot; Grafana</p>
+                <p class="span__tech mono">Spring Boot &middot; Kotlin &middot; Spring Security (JWT) &middot; Hibernate/JPA &middot; Maven &middot; Angular &middot; RxJS &middot; SQL Server &middot; Apache Kafka &middot; Docker &middot; GitLab CI/CD &middot; WAHA &middot; Playwright &middot; K6 &middot; Postman &middot; JUnit &middot; Grafana &middot; Jira</p>
               </div>
             </details>
           </li>
@@ -324,9 +345,10 @@
                   <li>Desenvolveu módulos do Taurus, ERP em produção em 4 empresas e usado no dia a dia pelas equipes de cada uma: módulo de compras (compara descontos por produto e por combo e aponta a opção mais vantajosa) e módulo de estoque.</li>
                   <li>Colocou em produção a exibição de fotos de ordens de serviço: um carrossel com Angular definindo o comportamento conforme a orientação da imagem (pausa e rotação de fotos em paisagem) e CSS (transforms e animações) para transições com efeito de profundidade, conforme spec do cliente.</li>
                   <li>Construiu uma aplicação de leilão com lances em tempo real via WebSocket e Spring Boot, refletindo cada lance para todos os participantes conectados.</li>
-                  <li>Front em Angular, PrimeNG e PrimeFlex; back em FastAPI (Python) e Spring Boot (Java/Kotlin) com Hibernate/JPA sobre PostgreSQL. Kanban, code reviews e versionamento no Bitbucket.</li>
+                  <li>Interfaces responsivas em Angular (RxJS, Signals), PrimeNG e PrimeFlex; serviços backend em FastAPI (Python) e Spring Boot (Java/Kotlin) com Hibernate/JPA, Spring Security e Gradle sobre PostgreSQL, com testes unitários em JUnit.</li>
+                  <li>Kanban, code reviews, entregas contínuas e versionamento no Bitbucket.</li>
                 </ul>
-                <p class="span__tech mono">Angular &middot; PrimeNG &middot; PrimeFlex &middot; Spring Boot &middot; Kotlin &middot; FastAPI &middot; Hibernate/JPA &middot; PostgreSQL &middot; WebSocket</p>
+                <p class="span__tech mono">Angular &middot; RxJS &middot; PrimeNG &middot; PrimeFlex &middot; Spring Boot &middot; Kotlin &middot; Spring Security &middot; FastAPI &middot; Hibernate/JPA &middot; Gradle &middot; PostgreSQL &middot; WebSocket &middot; JUnit</p>
               </div>
             </details>
           </li>
@@ -357,12 +379,13 @@
               </summary>
               <div class="span__body">
                 <ul>
-                  <li>Sistema de cadastro e habilitação de empresas fornecedoras de fardamento, com fluxo de aprovação, em Angular com Firebase como backend completo (autenticação, banco NoSQL e storage), em uso real e com suporte direto aos fornecedores.</li>
-                  <li>Evolução do front (Angular) e consultas ao banco de dados no backend de um sistema de controle de armamento em produção, com mais de 5.000 armas registradas.</li>
-                  <li>Sistema de checklist para conferência de patrimônio da corporação (viaturas, lanchas e equipamentos) e o sistema do Boletim Geral da PMAM (publicação oficial da corporação, equivalente a um diário oficial) em Spring Boot, Hibernate/JPA e PostgreSQL, com APIs REST documentadas em Swagger.</li>
-                  <li>Metodologia Kanban e versionamento no GitHub.</li>
+                  <li>Sistema de cadastro e habilitação de empresas fornecedoras de fardamento, com fluxo de aprovação, em Angular com Firebase como backend completo (Authentication, banco NoSQL Firestore e Cloud Storage para arquivos), em uso real e com suporte direto aos fornecedores.</li>
+                  <li>Evolução do frontend (Angular, RxJS) e consultas ao banco de dados no backend de um sistema de controle de armamento em produção, com mais de 5.000 armas registradas.</li>
+                  <li>Participou da construção de um sistema de checklist para conferência de patrimônio da corporação (viaturas, lanchas e equipamentos).</li>
+                  <li>Desenvolveu o sistema do Boletim Geral da PMAM (publicação oficial da corporação, equivalente a um diário oficial) com Spring Boot, Spring Security, Hibernate/JPA, Maven e PostgreSQL, testes unitários em JUnit e APIs REST documentadas em Swagger.</li>
+                  <li>Metodologia Kanban, versionamento no GitHub e trabalho em ambiente Linux.</li>
                 </ul>
-                <p class="span__tech mono">Angular &middot; Firebase &middot; Spring Boot &middot; Hibernate/JPA &middot; PostgreSQL &middot; Swagger &middot; Git</p>
+                <p class="span__tech mono">Angular &middot; RxJS &middot; Firebase &middot; Spring Boot &middot; Spring Security &middot; Hibernate/JPA &middot; Maven &middot; PostgreSQL &middot; JUnit &middot; Swagger &middot; Git &middot; Linux</p>
               </div>
             </details>
           </li>
@@ -404,37 +427,48 @@
 ## Frontend
 ### Angular
 - TypeScript
+- RxJS
+- Signals
 - PrimeNG
 - PrimeFlex
 - Chart.js
 ### Base web
-- HTML
-- CSS
+- HTML5
+- CSS3
+- JavaScript
+- Design responsivo
 
 ## Backend
 ### Spring Boot
 - Java
 - Kotlin
+- Spring Security (JWT)
+- Spring Data JPA
 - Hibernate/JPA
-- Swagger/OpenAPI
 ### FastAPI
 - Python
-- Swagger/OpenAPI
+### Swagger/OpenAPI
 
 ## Dados
 ### PostgreSQL
 ### SQL Server
+- T-SQL
+- Triggers
 ### Firebase
+- Authentication
+- Firestore
+- Cloud Storage
 
 ## APIs & arquitetura
 ### REST
 ### WebSocket
 ### Apache Kafka
-- Tópicos
+- Produtores
 - Consumers/workers
+### Microsserviços
+### Event-driven
 ### Clean Code
 ### SOLID
-### Arquitetura modular
 
 ## Testes & qualidade
 ### Playwright
@@ -444,6 +478,10 @@
 - Carga
 - Performance
 ### Postman
+- Testes de API
+### JUnit
+- Mockito
+- Testes unitários
 
 ## DevOps
 ### Git
@@ -453,6 +491,10 @@
 ### Docker
 ### CI/CD
 - GitLab Pipelines
+### Build
+- Maven
+- Gradle
+### Linux
 
 ## Métricas & docs
 ### Grafana
@@ -465,6 +507,7 @@
 ### Scrum
 ### Kanban
 ### Code Review
+### Jira
           </script>
         </div>
       </div>
@@ -473,14 +516,14 @@
         <article class="card skills__group">
           <h3>Frontend</h3>
           <dl>
-            <div><dt>Angular</dt><dd>TypeScript, PrimeNG, PrimeFlex, Chart.js</dd></div>
-            <div><dt>Base web</dt><dd>HTML, CSS</dd></div>
+            <div><dt>Angular</dt><dd>TypeScript, RxJS, Signals, PrimeNG, PrimeFlex, Chart.js</dd></div>
+            <div><dt>Base web</dt><dd>HTML5, CSS3, JavaScript, design responsivo</dd></div>
           </dl>
         </article>
         <article class="card skills__group">
           <h3>Backend</h3>
           <dl>
-            <div><dt>Spring Boot</dt><dd>Java, Kotlin, Hibernate/JPA, Swagger/OpenAPI</dd></div>
+            <div><dt>Spring Boot</dt><dd>Java, Kotlin, Spring Security (JWT), Spring Data JPA, Hibernate/JPA, Swagger/OpenAPI</dd></div>
             <div><dt>FastAPI</dt><dd>Python, Swagger/OpenAPI</dd></div>
           </dl>
         </article>
@@ -488,15 +531,16 @@
           <h3>Dados</h3>
           <dl>
             <div><dt>PostgreSQL</dt><dd>modelagem, consultas, persistência</dd></div>
-            <div><dt>SQL Server</dt><dd>sistema de changeover</dd></div>
-            <div><dt>Firebase</dt><dd>auth, NoSQL, storage</dd></div>
+            <div><dt>SQL Server</dt><dd>T-SQL, triggers</dd></div>
+            <div><dt>Firebase</dt><dd>Authentication, Firestore, Cloud Storage</dd></div>
           </dl>
         </article>
         <article class="card skills__group">
           <h3>APIs &amp; arquitetura</h3>
           <dl>
             <div><dt>REST + WebSocket</dt><dd>tempo real, Swagger/OpenAPI</dd></div>
-            <div><dt>Apache Kafka</dt><dd>tópicos, consumers/workers</dd></div>
+            <div><dt>Apache Kafka</dt><dd>produtores, consumers/workers</dd></div>
+              <div><dt>Microsserviços</dt><dd>arquitetura orientada a eventos</dd></div>
             <div><dt>Clean Code / SOLID</dt><dd>modular, desacoplado</dd></div>
           </dl>
         </article>
@@ -505,7 +549,8 @@
           <dl>
             <div><dt>Playwright</dt><dd>E2E, Page Object Model, TypeScript</dd></div>
             <div><dt>K6</dt><dd>carga e performance</dd></div>
-            <div><dt>Postman</dt><dd>fluxos de API encadeados</dd></div>
+            <div><dt>Postman</dt><dd>testes de API encadeados</dd></div>
+              <div><dt>JUnit + Mockito</dt><dd>testes unitários</dd></div>
           </dl>
         </article>
         <article class="card skills__group">
@@ -514,6 +559,7 @@
             <div><dt>Git</dt><dd>GitHub, GitLab, Bitbucket</dd></div>
             <div><dt>Docker</dt><dd>ambientes padronizados</dd></div>
             <div><dt>CI/CD</dt><dd>GitLab Pipelines</dd></div>
+              <div><dt>Maven, Gradle, Linux</dt><dd>build e ambiente</dd></div>
           </dl>
         </article>
         <article class="card skills__group">
@@ -529,6 +575,7 @@
           <dl>
             <div><dt>Scrum / Kanban</dt><dd>times ágeis</dd></div>
             <div><dt>Code Review</dt><dd>padrões de qualidade</dd></div>
+              <div><dt>Jira</dt><dd>gestão das tarefas</dd></div>
           </dl>
         </article>
       </div>
@@ -556,10 +603,10 @@
           <div class="practice__head"><h3>Cursos complementares</h3><span class="pill"><span class="pill__dot pill__dot--dim"></span>5 cursos</span></div>
           <ul class="courses">
             <li><span class="courses__n mono">01</span><strong>Desenvolvimento Web</strong><span class="courses__d mono">JavaScript, TypeScript e Angular</span></li>
-            <li><span class="courses__n mono">02</span><strong>Java e Orientação a Objetos</strong><span class="courses__d mono">Fundamentos da linguagem</span></li>
-            <li><span class="courses__n mono">03</span><strong>Python para Ciência de Dados</strong><span class="courses__d mono">Introdução</span></li>
-            <li><span class="courses__n mono">04</span><strong>Machine Learning</strong><span class="courses__d mono">Princípios, com Python</span></li>
-            <li><span class="courses__n mono">05</span><strong>Ethical Hacking</strong><span class="courses__d mono">Fundamentos de segurança</span></li>
+            <li><span class="courses__n mono">02</span><strong>Java e Orientação a Objetos</strong><span class="courses__d mono">Curso básico &middot; Projeto Aranoua</span></li>
+            <li><span class="courses__n mono">03</span><strong>Python para Ciência de Dados</strong><span class="courses__d mono">Introdução &middot; Projeto Aranoua</span></li>
+            <li><span class="courses__n mono">04</span><strong>Princípios de Machine Learning</strong><span class="courses__d mono">Edição Python &middot; Projeto Aranoua</span></li>
+            <li><span class="courses__n mono">05</span><strong>Fundamentos de Ethical Hacking</strong><span class="courses__d mono">Projeto Aranoua</span></li>
           </ul>
         </article>
       </div>
@@ -644,16 +691,16 @@
           <div class="project__top"><span class="project__num">01</span><span class="project__priv mono">&#9679; privado</span></div>
           <h3>Sistema de gestão de changeover</h3>
           <p class="project__tag mono">Foxconn &middot; 2025 &rarr; 2026 &middot; Desenvolvedor Full-Stack</p>
-          <p class="project__desc">Sistema distribuído em vários repositórios (backend, frontend, integração e WhatsApp/WAHA) para gerir a troca de linha de produção, com Spring Boot, Hibernate/JPA, Angular, SQL Server e Docker. Integração orientada a eventos com Apache Kafka entre o banco e o backend. Deploy semi-automatizado em pipeline GitLab.</p>
+          <p class="project__desc">Sistema em arquitetura de microsserviços, distribuído em vários repositórios (backend, frontend, integração e WhatsApp/WAHA), para gerir a troca de linha de produção, com Spring Boot, Spring Security (JWT), Hibernate/JPA, Angular, SQL Server e Docker. Integração orientada a eventos com Apache Kafka entre o banco e o backend. Deploy semi-automatizado em pipeline GitLab.</p>
           <div class="project__impact"><span class="project__impact-k mono">impacto</span><p>Monitora mais de 60 atividades por changeover e alerta o time via WhatsApp assim que o tempo previsto de uma atividade estoura. Antes, esse gargalo passava despercebido.</p></div>
-          <p class="mono project__stack">Spring Boot &middot; Hibernate/JPA &middot; Angular &middot; SQL Server &middot; Apache Kafka &middot; Docker &middot; GitLab CI/CD &middot; WAHA</p>
+          <p class="mono project__stack">Spring Boot &middot; Spring Security &middot; Hibernate/JPA &middot; Angular &middot; SQL Server &middot; Apache Kafka &middot; Docker &middot; GitLab CI/CD &middot; WAHA</p>
         </article>
 
         <article class="card project">
           <div class="project__top"><span class="project__num">02</span><span class="project__priv mono">&#9679; privado</span></div>
           <h3>Automação de testes E2E e de carga</h3>
           <p class="project__tag mono">Foxconn &middot; 2025 &rarr; 2026 &middot; Desenvolvedor Full-Stack</p>
-          <p class="project__desc">Suíte criada do zero para um sistema corporativo: cerca de 10 cenários E2E críticos em Playwright/TypeScript com Page Object Model, carga com K6, dashboards em Grafana/InfluxDB e ambientes de teste containerizados com Docker, tudo integrado ao CI/CD.</p>
+          <p class="project__desc">Suíte criada do zero para um sistema corporativo: cerca de 10 cenários E2E críticos em Playwright/TypeScript com Page Object Model, testes de API encadeados no Postman, carga com K6, dashboards em Grafana/InfluxDB e ambientes de teste containerizados com Docker, tudo integrado ao CI/CD.</p>
           <div class="project__impact"><span class="project__impact-k mono">impacto</span><p>Validação de fluxo caiu de aprox. 2&ndash;3 min manuais para aprox. 20s na UI e 3s na API; a carga com K6 expôs aprox. 30% de timeouts causados por uma VM de teste subdimensionada, antes de chegar em produção.</p></div>
           <p class="mono project__stack">Playwright &middot; K6 &middot; TypeScript &middot; Grafana &middot; InfluxDB &middot; Docker &middot; XWiki &middot; Postman</p>
         </article>
@@ -664,16 +711,16 @@
           <p class="project__tag mono">Projex Consulting &middot; 2024 &rarr; 2025 &middot; Desenvolvedor Full-Stack</p>
           <p class="project__desc">Módulos de um ERP em produção em 4 empresas, usado no dia a dia pelas equipes de cada uma. O módulo de compras compara descontos por produto e por combo e aponta a opção mais vantajosa; inclui carrossel de fotos de ordens de serviço (Angular + CSS) e uma aplicação de leilão em tempo real via WebSocket.</p>
           <div class="project__impact"><span class="project__impact-k mono">impacto</span><p>Código em produção nas 4 empresas, apoiando as equipes de compras e estoque com decisão de compra assistida e atualização de lances em tempo real para todos os participantes conectados.</p></div>
-          <p class="mono project__stack">Angular &middot; PrimeNG &middot; PrimeFlex &middot; Spring Boot &middot; Kotlin &middot; FastAPI &middot; Hibernate/JPA &middot; PostgreSQL &middot; WebSocket</p>
+          <p class="mono project__stack">Angular &middot; PrimeNG &middot; PrimeFlex &middot; Spring Boot &middot; Kotlin &middot; Spring Security &middot; FastAPI &middot; Hibernate/JPA &middot; PostgreSQL &middot; WebSocket</p>
         </article>
 
         <article class="card project">
           <div class="project__top"><span class="project__num">04</span><span class="project__priv mono">&#9679; privado</span></div>
           <h3>Sistemas internos da PMAM</h3>
           <p class="project__tag mono">Polícia Militar do Amazonas &middot; 2022 &rarr; 2024 &middot; Estágio</p>
-          <p class="project__desc">Cadastro e habilitação de fornecedores de fardamento (Angular com Firebase como backend completo), evolução do front de um sistema de controle de armamento em produção, checklist de conferência de patrimônio e o sistema do Boletim Geral da PMAM em Spring Boot, Hibernate/JPA e PostgreSQL.</p>
+          <p class="project__desc">Cadastro e habilitação de fornecedores de fardamento (Angular com Firebase como backend completo), evolução do frontend de um sistema de controle de armamento em produção, participação no checklist de conferência de patrimônio e o sistema do Boletim Geral da PMAM em Spring Boot, Spring Security, Hibernate/JPA e PostgreSQL.</p>
           <div class="project__impact"><span class="project__impact-k mono">impacto</span><p>Sistemas em uso real na corporação, incluindo o de controle de armamento, com mais de 5.000 armas registradas.</p></div>
-          <p class="mono project__stack">Angular &middot; Firebase &middot; Spring Boot &middot; Hibernate/JPA &middot; PostgreSQL &middot; Swagger &middot; Git</p>
+          <p class="mono project__stack">Angular &middot; Firebase &middot; Spring Boot &middot; Spring Security &middot; Hibernate/JPA &middot; PostgreSQL &middot; JUnit &middot; Swagger &middot; Git</p>
         </article>
       </div>
     </div>

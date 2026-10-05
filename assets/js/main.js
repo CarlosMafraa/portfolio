@@ -15,35 +15,71 @@
     if (!toggle) return;
     var dark = currentTheme() === "dark";
     toggle.setAttribute("aria-pressed", String(dark));
-    var label = toggle.querySelector(".theme-toggle__label");
-    if (label) label.textContent = dark ? "Claro" : "Escuro";
+    toggle.setAttribute("title", dark ? "Mudar para o tema claro" : "Mudar para o tema escuro");
   }
 
-  function setTheme(theme) {
+  function applyTheme(theme) {
     root.setAttribute("data-theme", theme);
-    try { localStorage.setItem("cm-theme", theme); } catch (e) {}
-    var meta = document.querySelector('meta[name="theme-color"]:not([media])');
-    if (meta) meta.setAttribute("content", theme === "dark" ? "#000000" : "#fbfbfa");
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute("content", theme === "dark" ? "#050505" : "#f6f5f1");
     syncToggle();
+  }
+
+  // escolha manual: fica salva e passa a valer em vez do horário
+  function setTheme(theme) {
+    try { localStorage.setItem("cm-theme", theme); } catch (e) {}
+    applyTheme(theme);
+  }
+
+  // Troca de tema com View Transitions, sempre a partir do botão:
+  //  - indo para o escuro, a escuridão se EXPANDE a partir do botão;
+  //  - voltando para o claro, a escuridão se RECOLHE para dentro do botão.
+  // Navegador sem suporte ou prefers-reduced-motion: troca direto, sem animação.
+  function switchTheme(from) {
+    var next = currentTheme() === "dark" ? "light" : "dark";
+    var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!document.startViewTransition || calm) { setTheme(next); return; }
+    var b = from.getBoundingClientRect();
+    var x = b.left + b.width / 2, y = b.top + b.height / 2;
+    var radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
+    var at = " at " + x + "px " + y + "px)";
+    var small = "circle(0px" + at, big = "circle(" + radius + "px" + at;
+    var toDark = next === "dark";
+    root.classList.add("theme-switching");
+    root.classList.toggle("theme-to-light", !toDark);
+    var t = document.startViewTransition(function () { setTheme(next); });
+    t.ready.then(function () {
+      root.animate(
+        { clipPath: toDark ? [small, big] : [big, small] },
+        {
+          duration: toDark ? 650 : 550,
+          easing: toDark ? "cubic-bezier(.16, 1, .3, 1)" : "cubic-bezier(.7, 0, .84, 0)",
+          fill: "forwards",
+          // no escuro anima a página nova (escura) crescendo; no claro, a antiga (escura) encolhendo
+          pseudoElement: toDark ? "::view-transition-new(root)" : "::view-transition-old(root)"
+        }
+      );
+    }).catch(function () {});
+    function done() { root.classList.remove("theme-switching", "theme-to-light"); }
+    t.finished.then(done, done);
   }
 
   if (toggle) {
     syncToggle();
-    toggle.addEventListener("click", function () {
-      setTheme(currentTheme() === "dark" ? "light" : "dark");
-    });
+    toggle.addEventListener("click", function () { switchTheme(toggle); });
   }
 
-  /* Acompanha o SO enquanto o usuário não escolher manualmente */
-  var mq = window.matchMedia("(prefers-color-scheme: dark)");
-  mq.addEventListener("change", function (e) {
+  /* Sem escolha salva, o tema segue o horário de Brasília também com a página aberta:
+     vira sozinho às 06:01 e às 18:01 (confere a cada minuto e ao voltar para a aba). */
+  function followClock() {
     var stored;
     try { stored = localStorage.getItem("cm-theme"); } catch (err) {}
-    if (stored !== "light" && stored !== "dark") {
-      root.setAttribute("data-theme", e.matches ? "dark" : "light");
-      syncToggle();
-    }
-  });
+    if (stored === "light" || stored === "dark" || !window.cmClockTheme) return;
+    var t = window.cmClockTheme();
+    if (t !== currentTheme()) applyTheme(t);
+  }
+  setInterval(followClock, 60000);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) followClock(); });
 
   /* ---- menu mobile ---- */
   var header = document.querySelector(".site-header");
@@ -429,10 +465,11 @@
     paddingX: 16,
     fitRatio: 0.92,
     duration: 250,
-    // sem arrastar e sem zoom: não rouba a rolagem da página; reenquadra sozinho ao expandir
+    // sem arrastar e sem zoom: não rouba a rolagem da página. O enquadramento é feito
+    // por fitToContent() (abaixo), que mantém o texto legível e ajusta a altura do quadro.
     zoom: false,
     pan: false,
-    autoFit: true
+    autoFit: false
   };
 
   // parser mínimo do outline (#, ##, ###, "- ", "  - ")
@@ -489,10 +526,40 @@
     var opts = mk.deriveOptions ? mk.deriveOptions(MM_OPTS) : MM_OPTS;
     var mm = mk.Markmap.create(svg, opts);
 
+    // Em vez de encolher o mapa até caber numa altura fixa (texto minúsculo ao abrir tudo),
+    // o zoom fica numa faixa legível e o QUADRO muda de altura para caber o mapa inteiro;
+    // a página rola normalmente. A altura do CSS vira o mínimo.
+    var READ_SCALE = 1;     // tamanho normal do texto (13px), igual ao resto dos detalhes do site
+    var MIN_SCALE = 0.92;   // zoom mínimo: o texto nunca fica menor que ~12px
+    var fitRatio = MM_OPTS.fitRatio;
+    function baseHeight() {
+      var prev = host.style.height;
+      host.style.height = "";
+      var h = host.getBoundingClientRect().height;
+      host.style.height = prev;
+      return h;
+    }
+    var minH = baseHeight();
+    function fitToContent() {
+      var r = mm.state.rect;
+      var natW = r.x2 - r.x1, natH = r.y2 - r.y1;
+      if (!natW || !natH) return mm.fit();
+      var width = host.getBoundingClientRect().width;
+      var scale = Math.max(MIN_SCALE, Math.min(READ_SCALE, (width * fitRatio) / natW));
+      var needed = Math.ceil((natH * scale) / fitRatio);
+      host.style.height = Math.max(minH, needed) + "px";
+      return mm.fit(scale);
+    }
+    // clicar num item para abrir/fechar também passa por aqui
+    var renderData = mm.renderData.bind(mm);
+    mm.renderData = function () {
+      return Promise.resolve(renderData.apply(mm, arguments)).then(fitToContent);
+    };
+
     var DEFAULT_LEVEL = 2;
     function render(level) {
       applyLevel(rootNode, level, 0);
-      Promise.resolve(mm.setData(rootNode)).then(function () { mm.fit(); });
+      return mm.setData(rootNode);
     }
     render(DEFAULT_LEVEL);
 
@@ -511,11 +578,11 @@
       });
     }
 
-    // reenquadra quando volta a ficar visível ou a janela muda
+    // reenquadra quando a janela muda (a altura mínima do CSS depende da tela)
     var rt;
     window.addEventListener("resize", function () {
       clearTimeout(rt);
-      rt = setTimeout(function () { mm.fit(); }, 200);
+      rt = setTimeout(function () { minH = baseHeight(); fitToContent(); }, 200);
     });
   }
 
