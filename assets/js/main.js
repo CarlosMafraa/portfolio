@@ -48,19 +48,28 @@
     root.classList.add("theme-switching");
     root.classList.toggle("theme-to-light", !toDark);
     var t = document.startViewTransition(function () { setTheme(next); });
+    var clip;
     t.ready.then(function () {
-      root.animate(
+      clip = root.animate(
         { clipPath: toDark ? [small, big] : [big, small] },
         {
-          duration: toDark ? 650 : 550,
-          easing: toDark ? "cubic-bezier(.16, 1, .3, 1)" : "cubic-bezier(.7, 0, .84, 0)",
+          // a expansão começa devagar, para a escuridão nascer visivelmente do botão
+          // (um ease-out forte cobria metade da tela já nos primeiros frames)
+          duration: toDark ? 700 : 550,
+          easing: toDark ? "cubic-bezier(.45, 0, .25, 1)" : "cubic-bezier(.7, 0, .84, 0)",
           fill: "forwards",
           // no escuro anima a página nova (escura) crescendo; no claro, a antiga (escura) encolhendo
           pseudoElement: toDark ? "::view-transition-new(root)" : "::view-transition-old(root)"
         }
       );
     }).catch(function () {});
-    function done() { root.classList.remove("theme-switching", "theme-to-light"); }
+    // o fill "forwards" segura o último frame até a transição acabar; depois precisa ser
+    // cancelado, senão o recorte final (circle(0px) no old) fica valendo na PRÓXIMA troca
+    // e esconde a página antiga inteira: a tela apagava de uma vez em vez de sair do botão
+    function done() {
+      if (clip) clip.cancel();
+      root.classList.remove("theme-switching", "theme-to-light");
+    }
     t.finished.then(done, done);
   }
 

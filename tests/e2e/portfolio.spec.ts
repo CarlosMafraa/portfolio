@@ -440,6 +440,71 @@ test.describe("tema", () => {
     await expect(html).not.toHaveClass(/theme-switching|theme-to-light/);
   });
 
+  test("trocas seguidas: nenhum recorte da troca anterior fica valendo", async ({ page }) => {
+    await atBrasilia(page, "12:00");
+    await page.goto("/");
+    const toggle = page.locator(".theme-toggle");
+    const html = page.locator("html");
+    // o circle(0px) do escuro -> claro ficava preso (fill forwards) e, na troca seguinte,
+    // escondia a página clara inteira: a tela apagava de uma vez em vez de sair do botão
+    const leftovers = () => page.evaluate(() => document.getAnimations()
+      .filter((a) => String((a.effect as KeyframeEffect | null)?.pseudoElement ?? "").startsWith("::view-transition")).length);
+    for (const theme of ["dark", "light", "dark", "light"]) {
+      await toggle.click();
+      await expect(html).toHaveAttribute("data-theme", theme);
+      await expect(html).not.toHaveClass(/theme-switching/);
+      expect(await leftovers()).toBe(0);
+    }
+  });
+
+  test("no toque o ícone termina reto e a troca sol/lua anima à vista", async ({ page }) => {
+    test.skip(!isMobile(page), "só no mobile");
+    await atBrasilia(page, "12:00");
+    await page.goto("/");
+    const toggle = page.locator(".theme-toggle");
+    const icon = toggle.locator(".theme-toggle__icon");
+    const core = toggle.locator(".theme-toggle__core");
+    const angle = () => icon.evaluate((i) => {
+      const m = new DOMMatrix(getComputedStyle(i).transform);
+      return Math.round(Math.atan2(m.b, m.a) * 180 / Math.PI);
+    });
+
+    await toggle.tap();                                       // claro -> escuro
+    // durante o recorte o raio cresce aos poucos (antes saltava de 5 para 8.5)
+    await expect.poll(() => core.evaluate((c) => parseFloat(getComputedStyle(c).r))).toBeGreaterThan(5);
+    await expect(page.locator("html")).not.toHaveClass(/theme-switching/);
+    expect(await angle()).toBe(180);                          // o :hover preso do toque não entorta a lua
+
+    await toggle.tap();                                       // escuro -> claro
+    await expect(page.locator("html")).not.toHaveClass(/theme-switching/);
+    expect(await angle()).toBe(0);
+  });
+
+  test("a escuridão nasce no botão: o círculo começa pequeno", async ({ page }) => {
+    await atBrasilia(page, "12:00");
+    await page.goto("/");
+    await page.evaluate(() => {
+      (window as any).__radius = [];
+      const orig = Element.prototype.animate;
+      Element.prototype.animate = function (this: Element, kf: any, opts: any) {
+        const a = orig.call(this, kf, opts);
+        const max = parseFloat(String(kf.clipPath?.[1]).slice(7));
+        // raio em cada um dos primeiros 100ms da animação
+        for (let ms = 0; ms <= 100; ms += 20) {
+          a.currentTime = ms;
+          (window as any).__radius.push((a.effect!.getComputedTiming().progress ?? 0) * max);
+        }
+        a.currentTime = 0;
+        return a;
+      } as any;
+    });
+    await page.locator(".theme-toggle").click();
+    await expect.poll(() => page.evaluate(() => (window as any).__radius.length)).toBe(6);
+    const radius: number[] = await page.evaluate(() => (window as any).__radius);
+    const max = await page.evaluate(() => Math.hypot(innerWidth, innerHeight));
+    expect(radius.at(-1)!).toBeLessThan(max * 0.1);           // aos 100ms ainda é um círculo em volta do botão
+  });
+
   test("com reduced-motion o tema troca sem animação", async ({ page }) => {
     await atBrasilia(page, "12:00");
     await page.emulateMedia({ reducedMotion: "reduce" });

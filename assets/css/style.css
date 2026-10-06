@@ -489,8 +489,11 @@ button { font: inherit; color: inherit; }
 :root[data-theme="dark"] .theme-toggle__core { r: 8.5px; }
 :root[data-theme="dark"] .theme-toggle__shadow { cx: 6.5px; cy: 12px; }
 :root[data-theme="dark"] .theme-toggle__rays { transform: rotate(45deg) scale(0); opacity: 0; }
-.theme-toggle:hover .theme-toggle__icon { transform: rotate(25deg); }
-:root[data-theme="dark"] .theme-toggle:hover .theme-toggle__icon { transform: rotate(160deg); }
+/* só com mouse: no toque o :hover fica preso depois do tap e deixava a lua torta (160°) */
+@media (hover: hover) {
+  .theme-toggle:hover .theme-toggle__icon { transform: rotate(25deg); }
+  :root[data-theme="dark"] .theme-toggle:hover .theme-toggle__icon { transform: rotate(160deg); }
+}
 
 /* troca de tema em círculo: a página nova é revelada por cima da antiga */
 ::view-transition-old(root),
@@ -500,8 +503,17 @@ button { font: inherit; color: inherit; }
 /* voltando para o claro, a página escura (antiga) fica por cima e se recolhe */
 :root.theme-to-light::view-transition-old(root) { z-index: 1; }
 :root.theme-to-light::view-transition-new(root) { z-index: 0; }
-/* durante o recorte, sem as transições de cor (o snapshot já mostra o resultado final) */
-.theme-switching, .theme-switching * { transition: none !important; }
+/* o ícone sai do snapshot da página e fica por cima do recorte, ao vivo: assim o sol
+   vira lua (e volta) à vista, mesmo quando a página escura antiga cobre o botão */
+.theme-toggle__icon { view-transition-name: theme-icon; }
+::view-transition-group(theme-icon),
+::view-transition-new(theme-icon) { animation: none; }
+::view-transition-old(theme-icon) { display: none; }
+::view-transition-group(theme-icon) { z-index: 2; }
+/* durante o recorte, sem as transições de cor (o snapshot já mostra o resultado final),
+   menos as do ícone, que é a própria animação sol/lua */
+.theme-switching,
+.theme-switching *:not(.theme-toggle__icon, .theme-toggle__icon *) { transition: none !important; }
 
 .nav-toggle {
   display: none;
