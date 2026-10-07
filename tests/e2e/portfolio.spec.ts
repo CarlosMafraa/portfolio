@@ -321,9 +321,10 @@ test.describe("navegação", () => {
         else requestAnimationFrame(check);
       })();
     }));
-    // a animação dura no máx. 650ms; o limite tem folga pra máquina carregada (testes em paralelo)
-    // e ainda pega o problema original (a rolagem nativa "smooth" levava vários segundos)
-    expect(ms).toBeLessThan(3000);
+    // com mouse a animação dura no máx. 650ms; o limite tem folga pra máquina carregada (testes em
+    // paralelo) e ainda pega o problema original (a rolagem nativa "smooth" levava vários segundos).
+    // No toque a rolagem é a nativa (~1,5s a página inteira), por causa do Safari do iPhone.
+    expect(ms).toBeLessThan(isMobile(page) ? 5000 : 3000);
   });
 
   test("rolar por conta própria logo após o clique não é puxado de volta", async ({ page }) => {
@@ -373,6 +374,7 @@ test.describe("navegação", () => {
   });
 
   test("skip link leva ao conteúdo", async ({ page }) => {
+    test.skip(test.info().project.name === "iphone", "o Safari só foca links com Option+Tab");
     await page.goto("/");
     await page.keyboard.press("Tab");
     const skip = page.getByRole("link", { name: "Pular para o conteúdo" });
@@ -478,6 +480,46 @@ test.describe("tema", () => {
     await toggle.tap();                                       // escuro -> claro
     await expect(page.locator("html")).not.toHaveClass(/theme-switching/);
     expect(await angle()).toBe(0);
+  });
+
+  test("no toque a logo do header não fica girada/maior depois do tap", async ({ page }) => {
+    test.skip(!isMobile(page), "só no mobile");
+    await atBrasilia(page, "12:00");
+    await page.goto("/");
+    const mark = page.locator(".brand__mark");
+    await page.locator(".brand").tap();
+    await page.waitForTimeout(700); // passa a transição de .5s do hover, se ela existisse
+    await expect(mark).toHaveCSS("transform", "none");
+    await page.locator(".theme-toggle").tap();                 // trocar o tema não muda a logo
+    await expect(page.locator("html")).not.toHaveClass(/theme-switching/);
+    await expect(mark).toHaveCSS("transform", "none");
+  });
+
+  test("logo do hero sem 3D no toque: a troca de tema não tem o que achatar", async ({ page }) => {
+    await atBrasilia(page, "12:00");
+    await page.goto("/");
+    const info = () => page.evaluate(() => {
+      const stage = document.querySelector(".logo-stage")!.getBoundingClientRect();
+      const mark = document.querySelector(".logo-stage__mark")!;
+      return {
+        ratio: mark.getBoundingClientRect().width / stage.width,
+        transform: getComputedStyle(mark).transform,
+        perspective: getComputedStyle(document.querySelector(".hero__visual")!).perspective,
+      };
+    });
+    const before = await info();
+    if (isMobile(page)) {
+      // no celular a "foto" da View Transition achatava o 3D e a logo encolhia durante a troca
+      expect(before.transform).toBe("none");
+      expect(before.perspective).toBe("none");
+      // e o tamanho é o mesmo que o translateZ dava: 58% x 900/(900-40)
+      expect(before.ratio).toBeCloseTo(0.58 * 900 / 860, 2);
+    } else {
+      expect(before.transform).toContain("matrix3d");             // com mouse o palco segue em 3D
+    }
+    await page.locator(".theme-toggle").click();
+    await expect(page.locator("html")).not.toHaveClass(/theme-switching/);
+    expect(await info()).toEqual(before);
   });
 
   test("a escuridão nasce no botão: o círculo começa pequeno", async ({ page }) => {

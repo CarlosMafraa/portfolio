@@ -330,13 +330,23 @@
       var max = document.documentElement.scrollHeight - window.innerHeight;
       return Math.max(0, Math.min(max, target.getBoundingClientRect().top + window.scrollY - offset));
     }
-    scrollToY(targetY, function () {
+    function arrive() {
       if (history.pushState) history.pushState(null, "", "#" + id);
       if (!target.hasAttribute("tabindex") && !/^(A|BUTTON|INPUT|SELECT|TEXTAREA)$/.test(target.tagName)) {
         target.setAttribute("tabindex", "-1");
       }
       target.focus({ preventScroll: true });
-    });
+    }
+    // no toque a rolagem fica com o próprio navegador: no Safari do iPhone a rolagem é
+    // assíncrona e a animação quadro a quadro achava que "alguém rolou por fora" e desistia
+    // logo no início, então o item do menu não levava a lugar nenhum
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      cancelScroll();
+      window.scrollTo({ top: targetY(), behavior: reduceMotion ? "auto" : "smooth" });
+      arrive();
+      return;
+    }
+    scrollToY(targetY, arrive);
   });
 
   /* ---- spotlight que segue o cursor ---- */

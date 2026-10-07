@@ -406,7 +406,11 @@ button { font: inherit; color: inherit; }
 .brand { display: inline-flex; align-items: center; gap: 11px; color: var(--fg); }
 .brand:hover { color: var(--fg); }
 .brand__mark { width: 2.125rem; height: 2.125rem; color: var(--fg); flex: none; transition: transform .5s var(--ease); }
-.brand:hover .brand__mark { transform: rotate(-12deg) scale(1.06); }
+/* só com mouse: no toque o :hover fica preso depois do tap e a logo ficava girada e maior,
+   "encolhendo" quando o toque seguinte (ex.: trocar o tema) tirava o hover dela */
+@media (hover: hover) {
+  .brand:hover .brand__mark { transform: rotate(-12deg) scale(1.06); }
+}
 .brand__text { display: flex; flex-direction: column; line-height: 1.05; white-space: nowrap; }
 .brand__name { font-family: var(--display); font-weight: 600; font-size: 1.125rem; letter-spacing: -.3px; text-transform: uppercase; }
 .brand__role { font-family: var(--mono); font-size: 0.625rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-top: 3px; }
@@ -419,7 +423,12 @@ button { font: inherit; color: inherit; }
   font-size: 0.9375rem;
 }
 .nav a { position: relative; color: var(--fg-2); transition: color .2s ease; }
-.nav a:hover { color: var(--accent); }
+/* hover só com mouse: no iPhone, um :hover que muda algo na tela faz o 1º toque
+   virar só "passar o mouse", e o link não era seguido */
+@media (hover: hover) {
+  .nav a:hover { color: var(--accent); }
+  .nav a:hover::after { transform: scaleX(1); transform-origin: left; }
+}
 .nav a::after {
   content: "";
   position: absolute;
@@ -430,7 +439,7 @@ button { font: inherit; color: inherit; }
   transform-origin: right;
   transition: transform .35s var(--ease);
 }
-.nav a:hover::after, .nav a.is-active::after { transform: scaleX(1); transform-origin: left; }
+.nav a.is-active::after { transform: scaleX(1); transform-origin: left; }
 .nav a.is-active { color: var(--accent); }
 
 .site-header__actions {
@@ -692,6 +701,14 @@ button { font: inherit; color: inherit; }
 .logo-stage__orbit--b { inset: 8%; animation-duration: 14s; animation-direction: reverse; }
 .logo-stage__orbit--b i { background: var(--tech); box-shadow: 0 0 12px 2px var(--tech); width: 6px; height: 6px; }
 .logo-stage__mark { position: relative; width: 58%; height: auto; color: var(--fg); transform: translateZ(40px); }
+/* sem mouse não há inclinação, então o palco fica plano. No celular a "foto" da página que a
+   troca de tema usa achatava o 3D: a logo perdia o aumento do translateZ e encolhia durante
+   a animação. Plana, a largura compensa esse aumento (900 / (900 - 40)) e o tamanho não muda */
+@media (pointer: coarse), (pointer: none) {
+  .hero__visual { perspective: none; }
+  .logo-stage { transform: none; transform-style: flat; }
+  .logo-stage__mark { transform: none; width: calc(58% * 900 / 860); }
+}
 
 .logo__draw { stroke-dasharray: 1 1; }
 .js .logo__draw { stroke-dashoffset: 1; animation: draw 1.8s var(--ease) .25s forwards; }
